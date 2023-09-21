@@ -1,14 +1,13 @@
-import '../model/tile_model.dart';
-int points = 800;
+import 'structure.dart';
+int points = 0;
 bool loadSelect = false;
 String selectedImagePath = "";
 late int selectedTileIndex;
 
 
-List<TileModel> pairs = [];
-List<TileModel> visiblePairs = [];
+List<TileModel> itemDuos = [];
+List<TileModel> hiddenDuos = [];
 List<TileModel> getPairs(){
-
   List<TileModel> pairs = [];
   TileModel tileModel1 = TileModel(pathToImage: "assets/images/1.png", selected: false);
   pairs.add(tileModel1);

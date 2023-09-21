@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:mem_game/data/data.dart';
-
-import 'model/tile_model.dart';
-
+import 'package:mem_game/Logic/functions_objects.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'Screen/game_screen/game_screen.dart';
+import 'package:animations/animations.dart';
+import 'Screen/settings_screen/SettingScreen.dart';
+import 'constants.dart';
 void main() {
-  runApp(MaterialApp(home: const MyApp()));
+  runApp(
+    MaterialApp(
+      // home: const GameScreen(),
+      home: MyApp(),
+      theme: ThemeData(
+        useMaterial3: true
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -15,125 +25,107 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    loadSelect = true;
-    pairs = getPairs();
-    pairs.shuffle();
-    visiblePairs = pairs;
-    Future.delayed(const Duration(seconds: 5), () {
-      setState(() {
-        visiblePairs = getQuestions();
-        loadSelect = false;
-      });
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 40,
+
+    late String greet;
+    int dayHour = DateTime.now().hour;
+    if (dayHour >= 0 && dayHour < 12) {
+      greet = "Good Morning,";
+    } else if (dayHour >= 12 && dayHour < 18) {
+      greet = "Good Afternoon,";
+    } else if (dayHour >= 18 && dayHour < 24) {
+      greet = "Good Evening,";
+    }
+
+    return LayoutBuilder(
+      builder: (context,constraints) {
+        var containerWidth = constraints.maxWidth;
+        var containerHeight = constraints.maxHeight;
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: containerHeight*0.2,
+            backgroundColor: scaffoldBackgroundColor,
+            title: Padding(
+              padding: EdgeInsets.only(top:containerHeight*0.01),
+              child: Text(greet,style: GoogleFonts.quicksand(color: bodyTextColor
+                  ,fontSize: 32,fontWeight: FontWeight.w300),),
             ),
-            Text(
-              "$points/800",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+          ),
+          backgroundColor: scaffoldBackgroundColor,
+          floatingActionButton: AnimatedScale(
+            duration: const Duration(milliseconds: 950),
+            scale: 1,
+            child: OpenContainer(
+              closedColor: darkModeButtonBackgroundGreen,
+              middleColor: darkModeButtonBackgroundGreen,
+              transitionType: ContainerTransitionType.fadeThrough,
+              closedShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              openBuilder: (BuildContext context, VoidCallback closeContainer) {
+                return SettingScreen();
+              },
+              closedBuilder: (BuildContext context, VoidCallback openContainer) {
+                return FloatingActionButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  onPressed: () {
+                    openContainer();
+                  },
+                  backgroundColor: darkModeButtonBackgroundGreen,
+                  elevation: 10.0,
+                  splashColor: Colors.grey,
+                  child: Icon(
+                    Icons.settings,
+                    color: darkModeButtonIconTextColorGreen,
+                    size: 25,
+                  ),
+                );
+              },
+              useRootNavigator: true,
             ),
-            Text("Points"),
-            SizedBox(
-              height: 20,
+          ),
+          body: Center(
+            child: MaterialButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),topLeft: Radius.circular(20),topRight: Radius.circular(20),bottomRight: Radius.circular(20))
+              ),
+              color: darkModeButtonBackgroundGreen,
+              onPressed: (){
+                showDialog(context: context, builder: (context){
+                    return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          side: BorderSide(color: buttonOutlineColor),
+                        ),
+                        title: Center(
+                          child: Text(
+                            "Alert",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.quicksand(fontSize: 25),
+                          ),
+                        ),
+                        content: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            width: 300,
+                            height: containerHeight * 0.1,
+                            child: Text("Hii")
+                          ),
+                        ));
+                });
+              },
+              child: Text("Alert",style: TextStyle(color: darkModeButtonIconTextColorGreen),),
             ),
-            points != 800
-                ? GridView(
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
-                    children: List.generate(visiblePairs.length, (index) {
-                      return ItemContainers(
-                        state: this,
-                        pathToImage: visiblePairs[index].getImagePath(),
-                        tileIndex: index,
-                      );
-                    }),
-                  )
-                : Container(
-                    padding: EdgeInsets.symmetric(vertical: 12,horizontal: 24),
-                    decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(25)),
-                    child: Text(
-                      "Replay",
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
-                    ),
-                  )
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }
 
-class ItemContainers extends StatefulWidget {
-  late String pathToImage;
-  late int tileIndex;
-  _MyAppState state;
 
-  ItemContainers({super.key, required this.pathToImage, required this.tileIndex, required this.state});
-
-  @override
-  State<ItemContainers> createState() => _ItemContainersState();
-}
-
-class _ItemContainersState extends State<ItemContainers> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        if (!loadSelect) {
-          if (selectedImagePath != "") {
-            if (selectedImagePath == pairs[widget.tileIndex].getImagePath()) {
-              print("Correct");
-              loadSelect = true;
-              Future.delayed(Duration(seconds: 2), () {
-                points = points + 100;
-                setState(() {});
-                loadSelect = false;
-                widget.state.setState(() {
-                  pairs[selectedTileIndex].setImagePath("");
-                  pairs[widget.tileIndex].setImagePath("");
-                });
-                selectedImagePath = "";
-              });
-            } else {
-              print("Wrong");
-              loadSelect = true;
-              Future.delayed(Duration(seconds: 2), () {
-                loadSelect = false;
-                widget.state.setState(() {
-                  pairs[widget.tileIndex].setIsSelected(false);
-                  pairs[selectedTileIndex].setIsSelected(false);
-                });
-
-                selectedImagePath = "";
-              });
-            }
-          } else {
-            selectedTileIndex = widget.tileIndex;
-            selectedImagePath = pairs[widget.tileIndex].getImagePath();
-          }
-          setState(() {
-            pairs[widget.tileIndex].setIsSelected(true);
-          });
-        }
-      },
-      child: Container(
-        margin: EdgeInsets.all(15),
-        child: pairs[widget.tileIndex].getImagePath() != ""
-            ? Image.asset(pairs[widget.tileIndex].getSelected() ? pairs[widget.tileIndex].getImagePath() : widget.pathToImage)
-            : Image.asset("assets/images/white.png"),
-      ),
-    );
-  }
-}
