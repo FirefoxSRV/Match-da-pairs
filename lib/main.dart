@@ -1,21 +1,28 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:mem_game/Logic/functions_objects.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mem_game/Screen/themes/dark_theme.dart';
+import 'package:mem_game/Screen/themes/light_theme.dart';
+import 'Material_components/material_alert_dialog.dart';
 import 'Screen/game_screen/game_screen.dart';
 import 'package:animations/animations.dart';
 import 'Screen/settings_screen/SettingScreen.dart';
 import 'constants.dart';
+
+
 void main() {
   runApp(
     MaterialApp(
       // home: const GameScreen(),
       home: MyApp(),
-      theme: ThemeData(
-        useMaterial3: true
-      ),
+      theme: lightTheme,
+      darkTheme: darkTheme,
     ),
   );
 }
+
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -47,20 +54,22 @@ class _MyAppState extends State<MyApp> {
         return Scaffold(
           appBar: AppBar(
             toolbarHeight: containerHeight*0.2,
-            backgroundColor: scaffoldBackgroundColor,
+            elevation: 0,
+            backgroundColor: Theme.of(context).colorScheme.background,
+            // backgroundColor: kScaffoldBackgroundColor,
             title: Padding(
               padding: EdgeInsets.only(top:containerHeight*0.01),
-              child: Text(greet,style: GoogleFonts.quicksand(color: bodyTextColor
+              child: Text(greet,style: GoogleFonts.quicksand(color:Theme.of(context).colorScheme.tertiary
                   ,fontSize: 32,fontWeight: FontWeight.w300),),
             ),
           ),
-          backgroundColor: scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).colorScheme.background,
           floatingActionButton: AnimatedScale(
             duration: const Duration(milliseconds: 950),
             scale: 1,
             child: OpenContainer(
-              closedColor: darkModeButtonBackgroundGreen,
-              middleColor: darkModeButtonBackgroundGreen,
+              closedColor: Theme.of(context).colorScheme.primary,
+              middleColor: Theme.of(context).colorScheme.primary,
               transitionType: ContainerTransitionType.fadeThrough,
               closedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
@@ -76,12 +85,12 @@ class _MyAppState extends State<MyApp> {
                   onPressed: () {
                     openContainer();
                   },
-                  backgroundColor: darkModeButtonBackgroundGreen,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
                   elevation: 10.0,
-                  splashColor: Colors.grey,
+                  splashColor: Theme.of(context).colorScheme.outline,
                   child: Icon(
                     Icons.settings,
-                    color: darkModeButtonIconTextColorGreen,
+                    color: Theme.of(context).colorScheme.secondary,
                     size: 25,
                   ),
                 );
@@ -89,37 +98,28 @@ class _MyAppState extends State<MyApp> {
               useRootNavigator: true,
             ),
           ),
-          body: Center(
-            child: MaterialButton(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),topLeft: Radius.circular(20),topRight: Radius.circular(20),bottomRight: Radius.circular(20))
-              ),
-              color: darkModeButtonBackgroundGreen,
-              onPressed: (){
-                showDialog(context: context, builder: (context){
-                    return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: BorderSide(color: buttonOutlineColor),
-                        ),
-                        title: Center(
-                          child: Text(
-                            "Alert",
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.quicksand(fontSize: 25),
-                          ),
-                        ),
-                        content: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            width: 300,
-                            height: containerHeight * 0.1,
-                            child: Text("Hii")
-                          ),
-                        ));
-                });
-              },
-              child: Text("Alert",style: TextStyle(color: darkModeButtonIconTextColorGreen),),
+          body: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Stack(
+              children: [
+                Center(child: Image.asset("assets/images/bgGameScreen.png",color: Theme.of(context).colorScheme.tertiary,alignment: Alignment.centerLeft)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ParentMaterialAlertDialog(containerHeight: containerHeight,title: "About game",onPressed: (){
+                      showDialog(context: context, builder: (context){
+                        return OpenMaterialAlertDialog(containerHeight: containerHeight);
+                      });
+                    },),
+                    ParentMaterialAlertDialog(containerHeight: containerHeight,title: "Play",onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                        return GameScreen();
+                      }));
+                    },)
+                  ],
+                ),
+
+              ],
             ),
           ),
         );
@@ -127,5 +127,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-
