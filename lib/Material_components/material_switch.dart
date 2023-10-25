@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mem_game/constants.dart';
 
 class MaterialSwitch extends StatefulWidget {
   final bool value;
@@ -53,7 +52,7 @@ class _MaterialSwitchState extends State<MaterialSwitch> {
           AnimatedContainer(
             height: 28,
             width: 58,
-            duration: Duration(milliseconds: 100),
+            duration: const Duration(milliseconds: 100),
             decoration: BoxDecoration(
                 color: value?Theme.of(context).hoverColor:Theme.of(context).indicatorColor,
                 borderRadius: BorderRadius.circular(100)

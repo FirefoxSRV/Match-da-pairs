@@ -1,11 +1,10 @@
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
 class ParentMaterialAlertDialog extends StatelessWidget {
-  ParentMaterialAlertDialog({
+  const ParentMaterialAlertDialog({
     super.key,
     required this.title,
     required this.containerHeight,
@@ -17,7 +16,7 @@ class ParentMaterialAlertDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),topLeft: Radius.circular(20),topRight: Radius.circular(20),bottomRight: Radius.circular(20))
       ),
       color: Theme.of(context).colorScheme.primary,

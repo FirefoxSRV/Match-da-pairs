@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mem_game/main.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../Logic/functions_objects.dart';
+import '../final_screen/game_complete_screen.dart';
 
+enum Selected { easy, medium, hard }
 
 void playCorrectSound() async {
   final player = AudioPlayer();
   const soundPath = "audio/success.mp3";
-  await player.play(AssetSource(soundPath),volume: 0.5);
+  await player.play(AssetSource(soundPath), volume: 0.5);
 }
 
 void playWrongSound() async {
@@ -17,7 +21,6 @@ void playWrongSound() async {
   const soundPath = "audio/wrong.mp3";
   await player.play(AssetSource(soundPath));
 }
-
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -29,9 +32,15 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   bool _isMounted = false;
   bool _showPoints = false;
-
+  Selected _selected = Selected.easy;
+  Timer? _switchModeTimer;
+  bool _isSwitchingModes = false;
   void _resetGameState() {
-    _isMounted = true;
+    if (_isSwitchingModes) {
+      _switchModeTimer?.cancel();
+    }
+    _isSwitchingModes = true;
+    _isMounted = false;
     loadSelect = true;
     itemDuos = getPairs();
     itemDuos.shuffle();
@@ -39,107 +48,159 @@ class _GameScreenState extends State<GameScreen> {
     selectedTileIndex = -1; // Reset selectedTileIndex to an invalid value
     selectedImagePath = ""; // Reset selectedImagePath
     points = 0;
-    Future.delayed(const Duration(seconds: 5), () {
+    _showPoints = false;
+    _switchModeTimer=Timer(const Duration(seconds: 5), () {
       _showPoints = true;
-      if (!_isMounted) return;
-      if(_isMounted){
+      if (_isMounted) return;
+      if (!_isMounted) {
         setState(() {
           hiddenDuos = getQuestions();
           loadSelect = false;
         });
       }
+      _isSwitchingModes = false;
     });
   }
 
   @override
   void initState() {
+    _switchModeTimer?.cancel();
     _resetGameState();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
     super.initState();
-
   }
 
   @override
   void dispose() {
     _isMounted = false;
     loadSelect = false;
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-        child: Column(
+    return LayoutBuilder(builder: (context, constraints) {
+      var width = constraints.maxWidth;
+      var height = constraints.maxHeight;
+      return Scaffold(
+        body: Column(
           children: [
             SizedBox(
-              height: 40,
+              height: height * 0.1,
             ),
-            Text(
-              _showPoints?"$points/8":"Memorize",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+            Container(
+              height: height * 0.05, //Changed
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    left: _selected == Selected.easy
+                        ? 0
+                        : _selected == Selected.medium
+                            ? MediaQuery.of(context).size.width / 3
+                            : 2 * MediaQuery.of(context).size.width / 3,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      height: height * 0.05,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildButton(Selected.easy, "Easy"),
+                      _buildButton(Selected.medium, "Medium"),
+                      _buildButton(Selected.hard, "Hard"),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            if (_showPoints)...[
-              Text("Points"),
-            ] else ...[
-              Text(" "),
-            ],
-
-            SizedBox(
-              height: 20,
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+              child: Column(
+                children: [
+                  Text(
+                    _showPoints ? "$points/8" : "Memorize",
+                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
+                  ),
+                  if (_showPoints) ...[
+                    const Text("Points"),
+                  ] else ...[
+                    const Text(" "),
+                  ],
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  points != 8
+                      ? GridView(
+                          shrinkWrap: true,
+                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
+                          children: List.generate(hiddenDuos.length, (index) {
+                            return ItemContainers(
+                              state: this,
+                              pathToImage: hiddenDuos[index].getImagePath(),
+                              tileIndex: index,
+                            );
+                          }),
+                        )
+                      : const GameCompleteScreen()
+                ],
+              ),
             ),
-            points != 8
-                ? GridView(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
-              children: List.generate(hiddenDuos.length, (index) {
-                return ItemContainers(
-                  state: this,
-                  pathToImage: hiddenDuos[index].getImagePath(),
-                  tileIndex: index,
-                );
-              }),
-            )
-                : GameCompleteScreen()
           ],
+        ),
+      );
+    });
+  }
+
+  Widget _buildButton(Selected level, String text) {
+    bool isSelected = _selected == level;
+    Color textColor = isSelected ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.tertiary;
+
+    return Expanded(
+      child: InkWell(
+        splashColor: Colors.transparent,
+        onTap: () {
+          if (_selected != level) {
+            setState(() {
+              _selected = level;
+              setMode(level.toString().split(".").last);
+              _resetGameState();
+            });
+          }
+
+
+        },
+        child: Container(
+          height: double.infinity,
+          alignment: Alignment.center,
+          child: Text(
+            text,
+            style: GoogleFonts.quicksand(fontWeight: FontWeight.bold, color: textColor),
+          ),
         ),
       ),
     );
   }
 }
-
-
-
-
-class GameCompleteScreen extends StatelessWidget {
-  const GameCompleteScreen({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    points = 0;
-    return Center(
-              child: Container(
-    padding: EdgeInsets.symmetric(vertical: 12,horizontal: 24),
-    decoration: BoxDecoration(color: Colors.amber, borderRadius: BorderRadius.circular(25)),
-    child: MaterialButton(
-      onPressed: (){
-        Navigator.pop(context);
-      },
-      child: Text(
-        "Go Home",
-        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
-      ),
-    ),
-              ),
-            );
-  }
-}
-
-
-
-
 
 class ItemContainers extends StatefulWidget {
   late String pathToImage;
@@ -153,11 +214,10 @@ class ItemContainers extends StatefulWidget {
 }
 
 class _ItemContainersState extends State<ItemContainers> {
-
   bool _isClickable = true;
 
   void _onTileTap() async {
-    if (!_isClickable || loadSelect ) return;
+    if (!_isClickable || loadSelect) return;
     // _isClickable = false;
     if (selectedTileIndex == widget.tileIndex) return;
     _isClickable = false;
@@ -167,7 +227,7 @@ class _ItemContainersState extends State<ItemContainers> {
           playCorrectSound();
           print("Correct");
           loadSelect = true;
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(const Duration(seconds: 1), () {
             if (!mounted) return;
             points = points + 1;
             setState(() {});
@@ -183,7 +243,7 @@ class _ItemContainersState extends State<ItemContainers> {
           playWrongSound();
           print("Ni");
           loadSelect = true;
-          Future.delayed(Duration(seconds: 2), () {
+          Future.delayed(const Duration(seconds: 2), () {
             loadSelect = false;
             widget.state.setState(() {
               itemDuos[widget.tileIndex].setIsSelected(false);
@@ -192,11 +252,8 @@ class _ItemContainersState extends State<ItemContainers> {
 
             selectedImagePath = "";
             selectedTileIndex = -1;
-            _isClickable= true;
-
+            _isClickable = true;
           });
-
-
         }
       } else {
         print("1 select");
@@ -209,25 +266,26 @@ class _ItemContainersState extends State<ItemContainers> {
       _isClickable = true;
     }
 
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     _isClickable = true;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _onTileTap,
       child: Container(
-        decoration: BoxDecoration(border:Border.all(color: Theme.of(context).colorScheme.tertiary),borderRadius: BorderRadius.circular(50)),
-        margin: EdgeInsets.all(15),
+        decoration: BoxDecoration(border: Border.all(color: Theme.of(context).colorScheme.tertiary), borderRadius: BorderRadius.circular(50)),
+        margin: const EdgeInsets.all(15),
         child: ClipOval(
           child: AnimatedSwitcher(
-            duration: Duration(seconds: 1),
+            duration: const Duration(seconds: 1),
             child: itemDuos[widget.tileIndex].getImagePath() != ""
                 ? Image.asset(itemDuos[widget.tileIndex].getSelected() ? itemDuos[widget.tileIndex].getImagePath() : widget.pathToImage)
-                : Icon(Icons.check,color: Theme.of(context).colorScheme.tertiary,),
+                : Icon(
+                    Icons.check,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
           ),
         ),
       ),

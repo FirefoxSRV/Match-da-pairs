@@ -8,9 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mem_game/Screen/game_screen/game_screen.dart';
-import 'package:mem_game/game_screen/game_screen.dart';
 
-import 'package:mem_game/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

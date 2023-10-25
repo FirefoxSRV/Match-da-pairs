@@ -5,7 +5,7 @@ import '../../constants.dart';
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
-  dialogBackgroundColor: Color(0xfff4e7e6),
+  dialogBackgroundColor: const Color(0xfff4e7e6),
   disabledColor: Colors.black54,
   indicatorColor: kLightSwitchBackgroundDisableColor,
   hoverColor: kLightSwitchBackgroundEnableColor,

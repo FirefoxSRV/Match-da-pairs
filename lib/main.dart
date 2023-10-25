@@ -1,20 +1,18 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:mem_game/Logic/functions_objects.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/themes/dark_theme.dart';
 import 'package:mem_game/Screen/themes/light_theme.dart';
+import 'package:mem_game/segmentedScreen.dart';
 import 'Material_components/material_alert_dialog.dart';
 import 'Screen/game_screen/game_screen.dart';
 import 'package:animations/animations.dart';
 import 'Screen/settings_screen/SettingScreen.dart';
-import 'constants.dart';
 
 
 void main() {
   runApp(
     MaterialApp(
-      // home: const GameScreen(),
+      // home: const SegmentedScreen(),
       home: MyApp(),
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -75,7 +73,7 @@ class _MyAppState extends State<MyApp> {
                 borderRadius: BorderRadius.circular(20.0),
               ),
               openBuilder: (BuildContext context, VoidCallback closeContainer) {
-                return SettingScreen();
+                return const SettingScreen();
               },
               closedBuilder: (BuildContext context, VoidCallback openContainer) {
                 return FloatingActionButton(
@@ -113,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                     },),
                     ParentMaterialAlertDialog(containerHeight: containerHeight,title: "Play",onPressed: (){
                       Navigator.push(context, MaterialPageRoute(builder: (context){
-                        return GameScreen();
+                        return const GameScreen();
                       }));
                     },)
                   ],
