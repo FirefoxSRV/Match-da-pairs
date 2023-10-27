@@ -30,41 +30,71 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
+  Timer? timeLeft;
   bool _isMounted = false;
   bool _showPoints = false;
   Selected _selected = Selected.easy;
   Timer? _switchModeTimer;
   bool _isSwitchingModes = false;
+
+
   void _resetGameState() {
     if (_isSwitchingModes) {
       _switchModeTimer?.cancel();
     }
+    timeLeft?.cancel();
+    tries = 0;
     _isSwitchingModes = true;
     _isMounted = false;
     loadSelect = true;
     itemDuos = getPairs();
     itemDuos.shuffle();
     hiddenDuos = itemDuos;
-    selectedTileIndex = -1; // Reset selectedTileIndex to an invalid value
-    selectedImagePath = ""; // Reset selectedImagePath
+    selectedTileIndex = -1;
+    selectedImagePath = "";
     points = 0;
+
     _showPoints = false;
-    _switchModeTimer=Timer(const Duration(seconds: 5), () {
-      _showPoints = true;
-      if (_isMounted) return;
+    if (_isMounted) return;
+    _switchModeTimer = Timer(const Duration(seconds: 5), () {
       if (!_isMounted) {
         setState(() {
+          _showPoints = true;
           hiddenDuos = getQuestions();
           loadSelect = false;
+          _isSwitchingModes = false;
+          timeTicker();
         });
       }
       _isSwitchingModes = false;
     });
   }
 
+  void timeTicker() {
+    print("Change");
+    timeLeft?.cancel();
+    timeLeft = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingTime == 0) {
+        timer.cancel();
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const GameCompleteScreen()));
+      } else {
+        if (_isMounted) {
+          setState(() {
+            remainingTime = remainingTime - 1;
+          });
+        } else {
+          timer.cancel();
+        }
+      }
+    });
+  }
+
+
   @override
   void initState() {
     _switchModeTimer?.cancel();
+    _isMounted = true;
     _resetGameState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
@@ -76,6 +106,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     _isMounted = false;
+    remainingTime = 125;
     loadSelect = false;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
@@ -83,6 +114,8 @@ class _GameScreenState extends State<GameScreen> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    timeLeft?.cancel();
+    _switchModeTimer?.cancel();
     super.dispose();
   }
 
@@ -92,6 +125,35 @@ class _GameScreenState extends State<GameScreen> {
       var width = constraints.maxWidth;
       var height = constraints.maxHeight;
       return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: _selected != Selected.easy
+            ? _showPoints == true ?AnimatedContainer(
+          duration: Duration(seconds: 3),
+          width: width*0.5,
+          child: AnimatedContainer(
+            duration: Duration(seconds: 1),
+            child: FloatingActionButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              onPressed: () {
+
+              },
+              child: Row(
+                children: [
+                  Expanded(child: Icon(Icons.alarm)),
+                  Expanded(
+                    child: Text(
+                      "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
+                      style: GoogleFonts.quicksand(fontWeight: FontWeight.bold,fontSize: width*0.05),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ):null
+            : null,
         body: Column(
           children: [
             SizedBox(
@@ -111,8 +173,8 @@ class _GameScreenState extends State<GameScreen> {
                     left: _selected == Selected.easy
                         ? 0
                         : _selected == Selected.medium
-                            ? MediaQuery.of(context).size.width / 3
-                            : 2 * MediaQuery.of(context).size.width / 3,
+                        ? MediaQuery.of(context).size.width / 3
+                        : 2 * MediaQuery.of(context).size.width / 3,
                     child: Container(
                       width: MediaQuery.of(context).size.width / 3,
                       height: height * 0.05,
@@ -137,31 +199,58 @@ class _GameScreenState extends State<GameScreen> {
               padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
               child: Column(
                 children: [
-                  Text(
-                    _showPoints ? "$points/8" : "Memorize",
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
-                  ),
-                  if (_showPoints) ...[
-                    const Text("Points"),
-                  ] else ...[
-                    const Text(" "),
-                  ],
-                  const SizedBox(
-                    height: 20,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _showPoints ? "$points/8 " : "Memorize",
+                            style: GoogleFonts.quicksand(fontSize: 24, fontWeight: FontWeight.w700),
+                          ),
+                          if (_showPoints) ...[
+                            Text("Points",style: GoogleFonts.quicksand(),),
+                          ] else ...[
+                            const Text(" "),
+                          ],
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   points != 8
                       ? GridView(
-                          shrinkWrap: true,
-                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
-                          children: List.generate(hiddenDuos.length, (index) {
-                            return ItemContainers(
-                              state: this,
-                              pathToImage: hiddenDuos[index].getImagePath(),
-                              tileIndex: index,
-                            );
-                          }),
-                        )
-                      : const GameCompleteScreen()
+                    shrinkWrap: true,
+                    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
+                    children: List.generate(hiddenDuos.length, (index) {
+                      return ItemContainers(
+                        state: this,
+                        pathToImage: hiddenDuos[index].getImagePath(),
+                        tileIndex: index,
+                      );
+                    }),
+                  )
+                      : const GameCompleteScreen(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _showPoints ? "$tries " : "You have 5 seconds",
+                        style: GoogleFonts.quicksand(fontSize: 24, fontWeight: FontWeight.w700),
+                      ),
+                      if (_showPoints) ...[
+                        Text("Tries",style: GoogleFonts.quicksand(),),
+                      ] else ...[
+                        const Text(" "),
+                      ],
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -184,10 +273,13 @@ class _GameScreenState extends State<GameScreen> {
               _selected = level;
               setMode(level.toString().split(".").last);
               _resetGameState();
+              if (_selected != Selected.easy){
+                remainingTime=125;
+                timeTicker();
+              }
+
             });
           }
-
-
         },
         child: Container(
           height: double.infinity,
@@ -201,7 +293,6 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 }
-
 class ItemContainers extends StatefulWidget {
   late String pathToImage;
   late int tileIndex;
@@ -218,7 +309,6 @@ class _ItemContainersState extends State<ItemContainers> {
 
   void _onTileTap() async {
     if (!_isClickable || loadSelect) return;
-    // _isClickable = false;
     if (selectedTileIndex == widget.tileIndex) return;
     _isClickable = false;
     if (!loadSelect) {
@@ -283,9 +373,9 @@ class _ItemContainersState extends State<ItemContainers> {
             child: itemDuos[widget.tileIndex].getImagePath() != ""
                 ? Image.asset(itemDuos[widget.tileIndex].getSelected() ? itemDuos[widget.tileIndex].getImagePath() : widget.pathToImage)
                 : Icon(
-                    Icons.check,
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
+              Icons.check,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
           ),
         ),
       ),

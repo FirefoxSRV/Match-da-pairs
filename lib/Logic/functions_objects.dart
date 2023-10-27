@@ -1,6 +1,9 @@
 import 'structure.dart';
 int points = 0;
+int tries = 0;
 bool loadSelect = false;
+
+int remainingTime = 125;
 String selectedImagePath = "";
 late int selectedTileIndex;
 String mode = "easy";
@@ -9,7 +12,6 @@ List<TileModel> itemDuos = [];
 List<TileModel> hiddenDuos = [];
 
 void setMode(String newMode){
-  print("Change called");
   mode = newMode;
 }
 
@@ -18,10 +20,8 @@ List<TileModel> getPairs(){
   if(mode == "easy") {
     return getPairsEasy();
   }else if(mode == "medium") {
-    print("Changed to medium");
     return getPairsMedium();
   }else{
-    print("Changed to hard");
     return getPairsHard();
   }
 }

@@ -4,7 +4,6 @@ class TileModel{
 
   TileModel({required this.pathToImage,required this.selected});
 
-
   void setImagePath(String imageAssetPath){
     pathToImage = imageAssetPath;
   }
