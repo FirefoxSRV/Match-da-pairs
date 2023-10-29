@@ -3,13 +3,19 @@ int points = 0;
 int tries = 0;
 bool loadSelect = false;
 
-int remainingTime = 125;
+int remainingTime = 120;
 String selectedImagePath = "";
 late int selectedTileIndex;
 String mode = "easy";
 
 List<TileModel> itemDuos = [];
 List<TileModel> hiddenDuos = [];
+enum Selected { easy, medium, hard }
+
+
+void resetRemainingTime(){
+  remainingTime = 120;
+}
 
 void setMode(String newMode){
   mode = newMode;
