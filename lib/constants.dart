@@ -28,3 +28,6 @@ Color kLightScaffoldBackgroundColor = const Color(0xFFf0f0f8);
 Color kLightModeButtonBackgroundGreen = const Color(0xFF386a20);
 Color kLightModeButtonIconTextColorGreen = Colors.white;
 Color kLightBodyTextColor = Colors.black;
+
+
+ThemeMode theme = ThemeMode.dark;

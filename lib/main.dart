@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/themes/dark_theme.dart';
 import 'package:mem_game/Screen/themes/light_theme.dart';
+import 'package:mem_game/constants.dart';
 import 'package:mem_game/segmentedScreen.dart';
 import 'Material_components/material_alert_dialog.dart';
 import 'Screen/game_screen/game_screen.dart';
@@ -12,6 +13,7 @@ import 'Screen/settings_screen/SettingScreen.dart';
 void main() {
   runApp(
     MaterialApp(
+      themeMode: theme,
       // home: const SegmentedScreen(),
       home: MyApp(),
       theme: lightTheme,

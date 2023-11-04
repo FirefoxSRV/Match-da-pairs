@@ -40,6 +40,9 @@ dependencies:
   lite_rolling_switch: ^1.0.1
   audioplayers: ^5.2.0
   async: ^2.11.0
+  google_sign_in: ^6.1.5
+  firebase_auth: ^4.12.1
+  font_awesome_flutter: ^10.6.0
 
 dev_dependencies:
   flutter_test:

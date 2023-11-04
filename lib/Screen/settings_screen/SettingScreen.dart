@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
+import 'package:mem_game/constants.dart';
 import '../../Material_components/material_switch.dart';
-
-
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -83,37 +83,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 )),
             SliverToBoxAdapter(child: SizedBox(height: containerHeight/30.26,),),
             SliverToBoxAdapter(
-                child: MaterialButton(
-                  onPressed: (){
-
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding:EdgeInsets.only(left: containerWidth/6.1),
-                        child: Text("Restore your data",
-                            style: GoogleFonts.quicksand(
-                                fontSize: 20.0, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary)),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [Padding(
-                          padding: EdgeInsets.only(bottom: containerHeight/42.264,left: containerWidth/20.57),
-                          child: Icon(Icons.home,color: Theme.of(context).colorScheme.tertiary,),
-                        ),
-                          SizedBox(width: containerWidth/16.45,),
-                          Expanded(
-                            child: Text(
-                                "If you have already used this app and stored the data , you can restore your cards in a click of a button  ",
-
-                                style: GoogleFonts.quicksand(fontSize: 16.0,color: Theme.of(context).colorScheme.tertiary)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )),
+                child: CustomTextButton(containerWidth: containerWidth, containerHeight: containerHeight)),
             SliverToBoxAdapter(
               child: Center(
                 child: MaterialSwitch(value:but,onChanged: (but){
