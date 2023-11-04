@@ -1,13 +1,14 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../Logic/google_user_info.dart';
 
 
-Future<User?> signInWithGoogle(GoogleSignIn _googleSignIn,FirebaseAuth _auth) async {
+Future<User?> signInWithGoogle(GoogleSignIn googleSignIn,FirebaseAuth auth) async {
   try {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -16,26 +17,30 @@ Future<User?> signInWithGoogle(GoogleSignIn _googleSignIn,FirebaseAuth _auth) as
         idToken: googleAuth.idToken,
       );
 
-      final UserCredential authResult = await _auth.signInWithCredential(credential);
+      final UserCredential authResult = await auth.signInWithCredential(credential);
       final User? user = authResult.user;
       selfUser.classMapper(user);
       return user;
     }
   } catch (error) {
-    print(error);
+    if (kDebugMode) {
+      print(error);
+    }
     return null;
   }
 }
 
 
-Future<void> signOut(_googleSignIn,_auth) async {
+Future<void> signOut(googleSignIn,auth) async {
   try {
-    await _auth.signOut();
-    await _googleSignIn.signOut();
+    await auth.signOut();
+    await googleSignIn.signOut();
 
     user = null;
     userAvailable = false;
   } catch (e) {
-    print("Error signing out: $e");
+    if (kDebugMode) {
+      print("Error signing out: $e");
+    }
   }
 }

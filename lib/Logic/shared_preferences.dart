@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mem_game/Logic/google_user_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,11 +18,13 @@ Future<void> getStoredData() async{
     pref.setString('photoUrl', '');
     return;
   }
-  selfUser.email = pref.getString('email')! ?? '';
-  selfUser.displayName = pref.getString('username')! ?? '';
-  selfUser.displayUrl = pref.getString('photoUrl')! ?? '';
+  selfUser.email = pref.getString('email')!;
+  selfUser.displayName = pref.getString('username')!;
+  selfUser.displayUrl = pref.getString('photoUrl')!;
   userAvailable = true;
-  print(selfUser.email);
+  if (kDebugMode) {
+    print(selfUser.email);
+  }
 }
 
 Future<void> resetStoredData() async{
