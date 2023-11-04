@@ -1,8 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mem_game/Material_components/material_alert_dialog.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
+import 'package:mem_game/Screen/settings_screen/setting_screen_utils/google_logic.dart';
+import 'package:mem_game/Screen/settings_screen/setting_screen_utils/sign_in_button.dart';
 import 'package:mem_game/constants.dart';
 import '../../Material_components/material_switch.dart';
+import 'setting_screen_utils/custom_circular_progress_indicator.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -12,6 +19,10 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isSigningIn = false;
+
   @override
   Widget build(BuildContext context) {
     bool but = true;
@@ -27,68 +38,92 @@ class _SettingScreenState extends State<SettingScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.arrow_back,color: Theme.of(context).colorScheme.tertiary,),
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.tertiary,
+                  ),
                 ),
                 backgroundColor: Theme.of(context).colorScheme.background,
                 bottom: PreferredSize(
                     preferredSize: const Size(0, 40),
                     child: Text(
                       "Settings ",
-                      style: GoogleFonts.quicksand(fontSize: 40.0,fontWeight: FontWeight.w500,color: Theme.of(context).colorScheme.tertiary),
+                      style: GoogleFonts.quicksand(fontSize: 40.0, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.tertiary),
                     ))),
             SliverToBoxAdapter(
-                child:SizedBox(
-                  height: containerHeight/28.6,
-                )),
-
+                child: SizedBox(
+              height: containerHeight / 28.6,
+            )),
             SliverToBoxAdapter(
                 child: Divider(
-                  endIndent: 10,
-                  indent: 10,
-                  color: Theme.of(context).colorScheme.outline,
-                )),
-            SliverToBoxAdapter(child: SizedBox(height: containerHeight/50,),),
+              endIndent: 10,
+              indent: 10,
+              color: Theme.of(context).colorScheme.outline,
+            )),
             SliverToBoxAdapter(
-                child: MaterialButton(
-                  onPressed:(){
-
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: containerWidth/6.1),
-                        child: Text("Store your data locally !",
-                            style: GoogleFonts.quicksand(
-                                fontSize: 20.0, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary)),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(bottom: containerHeight/42.264,left: containerWidth/20.57),
-                            child: Icon(Icons.home,color: Theme.of(context).colorScheme.tertiary,),
-                          ),
-                          SizedBox(width: containerWidth/16.45,),
-                          Expanded(
-                            child: Text(
-                              "The data of your cards are stored locally and secured using your fingerprint .",
-
-                              style: GoogleFonts.quicksand(fontSize: 16.0,color: Theme.of(context).colorScheme.tertiary),),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )),
-            SliverToBoxAdapter(child: SizedBox(height: containerHeight/30.26,),),
+              child: SizedBox(
+                height: containerHeight / 50,
+              ),
+            ),
             SliverToBoxAdapter(
-                child: CustomTextButton(containerWidth: containerWidth, containerHeight: containerHeight)),
+              child: CustomTextButton(
+                onPressed: () {},
+                content: "The data of your cards are stored locally and secured using your fingerprint .",
+                title: 'Store your data locally !',
+                containerWidth: containerWidth,
+                containerHeight: containerHeight,
+                fontAwesomeIcon: FontAwesomeIcons.folder,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: containerHeight / 30.26,
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: SignInButton(
+                onPressed: () async {
+                  setState(() {
+                    _isSigningIn = true;
+                  });
+
+                  signingInLoader(context, "Signing in...");
+
+                  User? user;
+                  try {
+                    user = await signInWithGoogle(_googleSignIn, _auth);
+                  } catch (error) {
+                    print(error);
+                    showDialog(context: context, builder:(dialogContext) {
+                      return OpenMaterialAlertDialog( title: 'Cannot Sign In', containerHeight: containerHeight,content: 'An error occurred while signing in with Google',);
+                    });
+                  } finally {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  }
+
+                  if (user == null) {
+                    showDialog(context: context, builder:(dialogContext) {
+                      return OpenMaterialAlertDialog(title: 'Cannot Sign In', containerHeight: containerHeight,content: 'An error occurred while signing in with Google',);
+                    });
+                  } else {
+                    print(user.email);
+                  }
+
+                  setState(() {
+                    _isSigningIn = false;
+                  });
+                },
+                title: _isSigningIn?"Signing in .....":"Sign In with Google",
+                fontAwesomeIcon: FontAwesomeIcons.google,
+                containerWidth: containerWidth,
+                containerHeight: containerHeight,
+                content: 'You have not yet signed in. Sign in to sync across devices',
+                isLoading: _isSigningIn,
+              ),
+            ),
             SliverToBoxAdapter(
               child: Center(
-                child: MaterialSwitch(value:but,onChanged: (but){
-
-                }),
+                child: MaterialSwitch(value: but, onChanged: (but) {}),
               ),
             )
           ],

@@ -3,25 +3,43 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-
-
-class CustomTextButton extends StatelessWidget {
-  CustomTextButton({
-    super.key,
-    required this.title,
+class SignInButton extends StatefulWidget {
+  double containerWidth;
+  double containerHeight;
+  String title;
+  String content;
+  IconData fontAwesomeIcon;
+  bool isLoading;
+  VoidCallback onPressed;
+  SignInButton({super.key,required this.title,
     required this.content,
     required this.containerWidth,
     required this.containerHeight,
     required this.fontAwesomeIcon,
-    required this.onPressed
-  });
+    required this.onPressed,
+    required this.isLoading});
 
-  final double containerWidth;
-  final double containerHeight;
-  final String title;
-  final String content;
-  final IconData fontAwesomeIcon;
+  @override
+  State<SignInButton> createState() => _SignInButtonState(title, content, containerWidth, containerHeight, fontAwesomeIcon, onPressed, isLoading);
+}
+
+class _SignInButtonState extends State<SignInButton> {
+
+  _SignInButtonState(this.title,
+      this.content,
+      this.containerWidth,
+      this.containerHeight,
+      this.fontAwesomeIcon,
+      this.onPressed,
+      this.isLoading);
+  double containerWidth;
+  double containerHeight;
+  String title;
+  String content;
+  IconData fontAwesomeIcon;
+  bool isLoading;
   VoidCallback onPressed;
+
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
@@ -54,3 +72,5 @@ class CustomTextButton extends StatelessWidget {
     );
   }
 }
+
+

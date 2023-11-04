@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>726323920460-j1l5l4a26po6od4bjqpl23c6fs3bvfbf.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.726323920460-j1l5l4a26po6od4bjqpl23c6fs3bvfbf</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>726323920460-n6o4fu7u4q6sr4k1nb81bbt3459sq4q7.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDFPL2WaP-lwzZCIYwmXWrxNFlimrfWj-E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>726323920460</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.memGame.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>memory-game-16a4b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>memory-game-16a4b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:726323920460:ios:031c43ba59cd0fb4e13ee9</string>
+</dict>
+</plist>

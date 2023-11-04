@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import '../constants.dart';
+
 
 class MaterialSwitch extends StatefulWidget {
   final bool value;
@@ -32,15 +32,14 @@ class _MaterialSwitchState extends State<MaterialSwitch> {
 
   void setOn(){
     setState(() {
-      theme = ThemeMode.dark;
+
     });
     value = true;
   }
 
   void setOff(){
     setState(() {
-      print("Dark mode off");
-      theme = ThemeMode.light;
+
       value=false;
     });
   }

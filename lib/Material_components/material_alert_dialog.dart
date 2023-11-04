@@ -35,9 +35,13 @@ class OpenMaterialAlertDialog extends StatelessWidget {
   const OpenMaterialAlertDialog({
     super.key,
     required this.containerHeight,
+    required this.title,
+    required this.content
   });
 
   final double containerHeight;
+  final String title;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +52,7 @@ class OpenMaterialAlertDialog extends StatelessWidget {
         ),
         title: Center(
           child: Text(
-            "Alert",
+            title,
             textAlign: TextAlign.center,
             style: GoogleFonts.quicksand(fontSize: 25,fontWeight: FontWeight.w600),
           ),
@@ -58,7 +62,7 @@ class OpenMaterialAlertDialog extends StatelessWidget {
           child: SizedBox(
               width: 300,
               height: containerHeight * 0.1,
-              child: Text("This is just a normal alert dialog box",style: GoogleFonts.quicksand(fontSize: 18,fontWeight: FontWeight.normal,color: Theme.of(context).disabledColor),)
+              child: Text(content,style: GoogleFonts.quicksand(fontSize: 18,fontWeight: FontWeight.normal,color: Theme.of(context).disabledColor),)
           ),
         ));
   }

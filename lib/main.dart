@@ -3,18 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/themes/dark_theme.dart';
 import 'package:mem_game/Screen/themes/light_theme.dart';
 import 'package:mem_game/constants.dart';
-import 'package:mem_game/segmentedScreen.dart';
 import 'Material_components/material_alert_dialog.dart';
 import 'Screen/game_screen/game_screen.dart';
 import 'package:animations/animations.dart';
 import 'Screen/settings_screen/SettingScreen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MaterialApp(
       themeMode: theme,
-      // home: const SegmentedScreen(),
       home: MyApp(),
       theme: lightTheme,
       darkTheme: darkTheme,
@@ -108,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                   children: [
                     ParentMaterialAlertDialog(containerHeight: containerHeight,title: "About game",onPressed: (){
                       showDialog(context: context, builder: (context){
-                        return OpenMaterialAlertDialog(containerHeight: containerHeight);
+                        return OpenMaterialAlertDialog(title: "Alert",content: "This is just a normal dialog box",containerHeight: containerHeight);
                       });
                     },),
                     ParentMaterialAlertDialog(containerHeight: containerHeight,title: "Play",onPressed: (){
