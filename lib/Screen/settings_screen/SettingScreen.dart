@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mem_game/Logic/google_user_info.dart';
+import 'package:mem_game/Logic/shared_preferences.dart';
 import 'package:mem_game/Material_components/material_alert_dialog.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/google_logic.dart';
@@ -81,45 +83,8 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child: SignInButton(
-                onPressed: () async {
-                  setState(() {
-                    _isSigningIn = true;
-                  });
-
-                  signingInLoader(context, "Signing in...");
-
-                  User? user;
-                  try {
-                    user = await signInWithGoogle(_googleSignIn, _auth);
-                  } catch (error) {
-                    print(error);
-                    showDialog(context: context, builder:(dialogContext) {
-                      return OpenMaterialAlertDialog( title: 'Cannot Sign In', containerHeight: containerHeight,content: 'An error occurred while signing in with Google',);
-                    });
-                  } finally {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  }
-
-                  if (user == null) {
-                    showDialog(context: context, builder:(dialogContext) {
-                      return OpenMaterialAlertDialog(title: 'Cannot Sign In', containerHeight: containerHeight,content: 'An error occurred while signing in with Google',);
-                    });
-                  } else {
-                    print(user.email);
-                  }
-
-                  setState(() {
-                    _isSigningIn = false;
-                  });
-                },
-                title: _isSigningIn?"Signing in .....":"Sign In with Google",
-                fontAwesomeIcon: FontAwesomeIcons.google,
-                containerWidth: containerWidth,
-                containerHeight: containerHeight,
-                content: 'You have not yet signed in. Sign in to sync across devices',
-                isLoading: _isSigningIn,
-              ),
+              child:
+                  userAvailable ? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
             ),
             SliverToBoxAdapter(
               child: Center(
@@ -129,6 +94,119 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         );
       }),
+    );
+  }
+
+
+
+
+
+  SignInButton userNotLoggedIn(BuildContext context, double containerHeight, double containerWidth) {
+    return SignInButton(
+      onPressed: () async {
+        setState(() {
+          _isSigningIn = true;
+        });
+
+        showLoadingDialog(context, "Signing in...");
+        try {
+          user = await signInWithGoogle(_googleSignIn, _auth);
+        } catch (error) {
+          print(error);
+          showDialog(
+              context: context,
+              builder: (dialogContext) {
+                return OpenMaterialAlertDialog(
+                  title: 'Cannot Sign In',
+                  containerHeight: containerHeight,
+                  content: 'An error occurred while signing in with Google',
+                );
+              });
+        } finally {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+
+        if (user == null) {
+          showDialog(
+              context: context,
+              builder: (dialogContext) {
+                return OpenMaterialAlertDialog(
+                  title: 'Cannot Sign In',
+                  containerHeight: containerHeight,
+                  content: 'An error occurred while signing in with Google',
+                );
+              });
+        } else {
+          setState(() {
+            userAvailable = true;
+            print(user?.email);
+            selfUser.displayName = user!.displayName!;
+            selfUser.email = user!.email!;
+            selfUser.displayUrl = user!.photoURL!;
+            setDataToStore(user?.email!, user?.displayName!, user?.photoURL!);
+          });
+        }
+
+        setState(() {
+          _isSigningIn = false;
+        });
+      },
+      title: "Sign In with Google",
+      fontAwesomeIcon: FontAwesomeIcons.google,
+      containerWidth: containerWidth,
+      containerHeight: containerHeight,
+      content: 'You have not yet signed in. Sign in to sync across devices',
+      isLoading: _isSigningIn,
+    );
+  }
+
+
+
+
+
+
+  SignInButton userLoggedIn(BuildContext context, double containerHeight, double containerWidth) {
+    return SignInButton(
+      onPressed: () {
+        setState(() {
+          _isSigningIn = true;
+        });
+
+        showLoadingDialog(context, "Signing out...");
+        try {
+          signOut(_googleSignIn, _auth);
+          selfUser.email = "";
+          selfUser.displayName = "";
+          selfUser.displayUrl = "";
+          resetStoredData();
+        } catch (error) {
+          print(error);
+          showDialog(
+              context: context,
+              builder: (dialogContext) {
+                return OpenMaterialAlertDialog(
+                  title: 'An error while signing out occurred',
+                  containerHeight: containerHeight,
+                  content: 'An error occurred while signing out with Google',
+                );
+              });
+        } finally {
+          Navigator.of(context, rootNavigator: true).pop();
+        }
+
+        setState(() {
+          _isSigningIn = false;
+        });
+        setState(() {
+          userAvailable = false;
+        });
+      },
+      title: "You are signed in with Google",
+      fontAwesomeIcon: FontAwesomeIcons.check,
+      containerWidth: containerWidth,
+      containerHeight: containerHeight,
+      content: 'Signed in as ${selfUser?.displayName} \nClick to sign out',
+      isLoading: _isSigningIn,
     );
   }
 }

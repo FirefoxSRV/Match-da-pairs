@@ -3,14 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class SignInButton extends StatefulWidget {
-  double containerWidth;
-  double containerHeight;
-  String title;
-  String content;
-  IconData fontAwesomeIcon;
-  bool isLoading;
-  VoidCallback onPressed;
+
+class SignInButton extends StatelessWidget {
   SignInButton({super.key,required this.title,
     required this.content,
     required this.containerWidth,
@@ -19,19 +13,6 @@ class SignInButton extends StatefulWidget {
     required this.onPressed,
     required this.isLoading});
 
-  @override
-  State<SignInButton> createState() => _SignInButtonState(title, content, containerWidth, containerHeight, fontAwesomeIcon, onPressed, isLoading);
-}
-
-class _SignInButtonState extends State<SignInButton> {
-
-  _SignInButtonState(this.title,
-      this.content,
-      this.containerWidth,
-      this.containerHeight,
-      this.fontAwesomeIcon,
-      this.onPressed,
-      this.isLoading);
   double containerWidth;
   double containerHeight;
   String title;
@@ -39,7 +20,6 @@ class _SignInButtonState extends State<SignInButton> {
   IconData fontAwesomeIcon;
   bool isLoading;
   VoidCallback onPressed;
-
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
@@ -72,5 +52,6 @@ class _SignInButtonState extends State<SignInButton> {
     );
   }
 }
+
 
 

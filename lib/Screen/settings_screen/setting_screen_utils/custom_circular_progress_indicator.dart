@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 
 
-Future<void> signingInLoader(BuildContext context, String text) async {
+Future<void> showLoadingDialog(BuildContext context, String text) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,

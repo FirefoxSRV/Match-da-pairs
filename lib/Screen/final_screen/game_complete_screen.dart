@@ -1,9 +1,6 @@
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mem_game/main.dart';
-
 import '../../Logic/functions_objects.dart';
+import '../first_screen/my_app.dart';
 
 class GameCompleteScreen extends StatelessWidget {
   final Selected selected;
@@ -26,7 +23,7 @@ class GameCompleteScreen extends StatelessWidget {
         if (remainingTime != 0){
           Navigator.pop(context);
         }
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyApp()));
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const MyApp()));
         return Future.value(false);
       },
       child: Scaffold(
@@ -41,26 +38,19 @@ class GameCompleteScreen extends StatelessWidget {
                   if (remainingTime != 0){
                     Navigator.pop(context);
                   }
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyApp()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const MyApp()));
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: const Text(
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
                     "Go Home",
                     style: TextStyle(fontSize: 17, fontWeight: FontWeight.w500, color: Colors.black),
                   ),
                 ),
               ),
-              Container(
-                child: Text("points :$points"),
-              ),
-              selected != Selected.easy?Container(
-                child: Text("Remaining Time :$remainingTime"),
-              ):Container(child: Text(""),),
-              Container(
-
-                child: Text("Tries:$tries"),
-              )
+              Text("points :$points"),
+              selected != Selected.easy?Text("Remaining Time :$remainingTime"):const Text(""),
+              Text("Tries:$tries")
             ],
           ),
         ),
