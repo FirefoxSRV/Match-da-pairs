@@ -9,7 +9,6 @@ import 'package:mem_game/Material_components/material_alert_dialog.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/google_logic.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/sign_in_button.dart';
-import 'package:mem_game/constants.dart';
 import '../../Material_components/material_switch.dart';
 import 'setting_screen_utils/custom_circular_progress_indicator.dart';
 
@@ -84,7 +83,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             SliverToBoxAdapter(
               child:
-                  userAvailable ? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
+                  userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
             ),
             SliverToBoxAdapter(
               child: Center(

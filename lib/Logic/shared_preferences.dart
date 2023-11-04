@@ -18,9 +18,9 @@ Future<void> getStoredData() async{
     pref.setString('photoUrl', '');
     return;
   }
-  selfUser.email = pref.getString('email')!;
-  selfUser.displayName = pref.getString('username')!;
-  selfUser.displayUrl = pref.getString('photoUrl')!;
+  selfUser.email = pref.getString('email')! ?? '';
+  selfUser.displayName = pref.getString('username')! ?? '';
+  selfUser.displayUrl = pref.getString('photoUrl')! ?? '';
   userAvailable = true;
   if (kDebugMode) {
     print(selfUser.email);
