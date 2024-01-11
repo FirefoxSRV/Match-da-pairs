@@ -35,18 +35,32 @@ class GameScreenState extends State<GameScreen> {
   Selected _selected = Selected.easy;
   Timer? _switchModeTimer;
   bool _isSwitchingModes = false;
-
-
+  int remainingSeconds = 5;
+  bool _isCountToStart = false;
+  Timer? _isCountToStartTimer;
+  void startTimer() {
+    _isCountToStartTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (remainingSeconds > 0) {
+        setState(() {
+          remainingSeconds--;
+        });
+      } else {
+        timer.cancel();
+      }
+    });
+  }
 
 
   void _resetGameState() {
     if (_isSwitchingModes) {
+      _isCountToStartTimer?.cancel();
       _switchModeTimer?.cancel();
     }
     timeLeft?.cancel();
     tries = 0;
     _isSwitchingModes = true;
-    _isMounted = false;
+    _isMounted = false;  // _isMounted makes sure that the widget is updated only if it exists.....if there is no widget, updating it
+                         // will result in a runtime error
     loadSelect = true;
     itemDuos = getPairs();
     itemDuos.shuffle();
@@ -54,18 +68,19 @@ class GameScreenState extends State<GameScreen> {
     selectedTileIndex = -1;
     selectedImagePath = "";
     points = 0;
-
-    _showPoints = false;
-    if (_isMounted) return;
+    remainingSeconds = 5;
+    _showPoints = false; // If already mounted , return without any operation
+    startTimer();
     _switchModeTimer = Timer(const Duration(seconds: 5), () {
-      if (!_isMounted) {
-        setState(() {
-          _showPoints = true;
-          hiddenDuos = getQuestions();
-          loadSelect = false;
-          _isSwitchingModes = false;
-        });
-      }
+    setState(() {
+      _showPoints = true;
+      hiddenDuos = getQuestions();
+      loadSelect = false;
+      _isSwitchingModes = false;
+
+
+    });
+
       _isSwitchingModes = false;
     });
   }
@@ -73,8 +88,9 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   void initState() {
+    _isCountToStartTimer?.cancel();
     _switchModeTimer?.cancel();
-    _isMounted = true;
+    _isMounted = true;               // I am mounting the widget
     _resetGameState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
@@ -85,7 +101,7 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   void dispose() {
-    _isMounted = false;
+    _isMounted = false;     // Now I am indicating destruction of the widget
     resetRemainingTime();
     loadSelect = false;
     SystemChrome.setPreferredOrientations([
@@ -105,6 +121,11 @@ class GameScreenState extends State<GameScreen> {
       var width = constraints.maxWidth;
       var height = constraints.maxHeight;
       return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+          leading: Icon(Icons.chevron_left,color: Theme.of(context).colorScheme.tertiary,),
+        ),
         body: AnimatedSwitcher(
           reverseDuration: Duration(milliseconds: 300),
           duration: Duration(milliseconds: 300),
@@ -114,6 +135,7 @@ class GameScreenState extends State<GameScreen> {
           child: points!= 8
               ? Stack(
             children: [
+              // 1000 IQ logic....lol
               Scaffold(
                 backgroundColor: Colors.transparent,
                 floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -135,10 +157,10 @@ class GameScreenState extends State<GameScreen> {
               Column(
                 children: [
                   SizedBox(
-                    height: height * 0.1,
+                    height: height * 0.05,
                   ),
                   Container(
-                    height: height * 0.05, //Changed
+                    height: height * 0.05,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.background,
                       borderRadius: BorderRadius.circular(20),
@@ -210,24 +232,25 @@ class GameScreenState extends State<GameScreen> {
                             );
                           }),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              _showPoints ? "$tries " : "You have 5 seconds",
-                              style: GoogleFonts.quicksand(fontSize: 24, fontWeight: FontWeight.w700),
-                            ),
-                            if (_showPoints) ...[
-                              Text("Tries",style: GoogleFonts.quicksand(),),
-                            ] else ...[
-                              const Text(" "),
-                            ],
-                            const SizedBox(
-                              height: 20,
-                            ),
-                          ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _showPoints ? "$tries " : "You have $remainingSeconds seconds",
+                          style: GoogleFonts.quicksand(fontSize: 24, fontWeight: FontWeight.w700),
+                        ),
+                        if (_showPoints) ...[
+                          Text("Tries", style: GoogleFonts.quicksand()),
+                        ] else ...[
+                          const Text(" "),
+                        ],
+                        const SizedBox(
+                          height: 20,
                         ),
                       ],
+                    )
+
+                    ],
                     ),
                   ),
                 ],
@@ -245,7 +268,7 @@ class GameScreenState extends State<GameScreen> {
 
     return Expanded(
       child: InkWell(
-        splashColor: Colors.transparent,
+        splashColor: null,
         onTap: () {
           if (_selected != level) {
             setState(() {

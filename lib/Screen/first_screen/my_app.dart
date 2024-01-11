@@ -1,6 +1,5 @@
 import 'package:animations/animations.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -22,7 +21,7 @@ void main() async{
   runApp(
     MaterialApp(
       themeMode: theme,
-      home: MyApp(),
+      home: const MyApp(),
       theme: lightTheme,
       darkTheme: darkTheme,
     ),
@@ -63,7 +62,6 @@ class _MyAppState extends State<MyApp> {
               toolbarHeight: containerHeight*0.2,
               elevation: 0,
               backgroundColor: Theme.of(context).colorScheme.background,
-              // backgroundColor: kScaffoldBackgroundColor,
               title: Padding(
                 padding: EdgeInsets.only(top:containerHeight*0.01),
                 child: Text(greet,style: GoogleFonts.quicksand(color:Theme.of(context).colorScheme.tertiary

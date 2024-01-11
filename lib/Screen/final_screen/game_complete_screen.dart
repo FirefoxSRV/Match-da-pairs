@@ -18,13 +18,15 @@ class GameCompleteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: (){
+    return PopScope(
+      onPopInvoked: (didPop){
+        if (didPop){
+          return;
+        }
         if (remainingTime != 0){
           Navigator.pop(context);
         }
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const MyApp()));
-        return Future.value(false);
       },
       child: Scaffold(
         body: Center(

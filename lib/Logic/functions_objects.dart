@@ -31,7 +31,7 @@ List<TileModel> getPairs(){
     return getPairsHard();
   }
 }
-
+// TODO :  Changing images for hard and medium
 List<TileModel> getPairsHard() {
   List<TileModel> pairs = [];
   TileModel tileModel1 = TileModel(pathToImage: "assets/images/a.png", selected: false);
