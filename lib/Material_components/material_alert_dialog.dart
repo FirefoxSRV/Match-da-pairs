@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -27,21 +26,19 @@ class ParentMaterialAlertDialog extends StatelessWidget {
 }
 
 
-
-
-
-
 class OpenMaterialAlertDialog extends StatelessWidget {
   const OpenMaterialAlertDialog({
     super.key,
     required this.containerHeight,
     required this.title,
-    required this.content
+    required this.content,
+    this.actions
   });
 
   final double containerHeight;
   final String title;
   final String content;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +61,9 @@ class OpenMaterialAlertDialog extends StatelessWidget {
               height: containerHeight * 0.1,
               child: Text(content,style: GoogleFonts.quicksand(fontSize: 18,fontWeight: FontWeight.normal,color: Theme.of(context).disabledColor),)
           ),
-        ));
+        ),
+      actions: actions,
+    );
   }
 }
 

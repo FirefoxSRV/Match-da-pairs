@@ -30,4 +30,4 @@ Color kLightModeButtonIconTextColorGreen = Colors.white;
 Color kLightBodyTextColor = Colors.black;
 
 
-ThemeMode theme = ThemeMode.dark;
+ThemeMode theme = ThemeMode.system;

@@ -11,15 +11,15 @@ Future<User?> signInWithGoogle(GoogleSignIn googleSignIn,FirebaseAuth auth) asyn
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
+      print("GOOd, working");
       final UserCredential authResult = await auth.signInWithCredential(credential);
       final User? user = authResult.user;
       selfUser.classMapper(user);
+
       return user;
     }
   } catch (error) {

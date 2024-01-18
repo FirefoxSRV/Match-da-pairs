@@ -37,6 +37,13 @@
             {
               "client_id": "726323920460-udj8d4762rf2ph9r6rjtc02of8i62gro.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "726323920460-fjb6nko9lv62cvas0c246les74tbpp3h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.memGame"
+              }
             }
           ]
         }
