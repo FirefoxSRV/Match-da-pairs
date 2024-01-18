@@ -115,7 +115,7 @@ class GameScreenState extends State<GameScreen> {
     return WillPopScope(
       onWillPop: () async{
         await buildExitDialog(context, alertDialogHeightCalculator);
-        return false;
+        return true;
       },
       child: LayoutBuilder(builder: (context, constraints) {
         var width = constraints.maxWidth;

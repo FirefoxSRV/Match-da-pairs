@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../Logic/functions_objects.dart';
 import '../first_screen/my_app.dart';
 
-class GameCompleteScreen extends StatelessWidget {
+
+
+class GameCompleteScreen extends StatefulWidget {
   final Selected selected;
   final int tries;
   final int remainingTime;
@@ -16,6 +18,30 @@ class GameCompleteScreen extends StatelessWidget {
     super.key,
   });
 
+  @override
+  State<GameCompleteScreen> createState() => _GameCompleteScreenState();
+}
+
+class _GameCompleteScreenState extends State<GameCompleteScreen> {
+  int scoreCalculation(int tries,int timeLeft,Selected selected){
+    if(selected == Selected.easy){
+      return 500;
+    }else if(selected == Selected.medium){
+      int score = 1000 - (50* (tries-8)) + 5*(timeLeft);
+      return score;
+    }else if(selected == Selected.hard){
+      int score = 1500 - (50* (tries-8)) + 5*(timeLeft);
+      return score;
+    }
+    return 0;
+  }
+
+  @override
+  void initState() {
+    int score = scoreCalculation(tries, widget.remainingTime, widget.selected);
+    print(score);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -51,7 +77,7 @@ class GameCompleteScreen extends StatelessWidget {
                 ),
               ),
               Text("points :$points"),
-              selected != Selected.easy?Text("Remaining Time :$remainingTime"):const Text(""),
+              widget.selected != Selected.easy?Text("Remaining Time :$remainingTime"):const Text(""),
               Text("Tries:$tries")
             ],
           ),
@@ -60,3 +86,6 @@ class GameCompleteScreen extends StatelessWidget {
     );
   }
 }
+
+
+
