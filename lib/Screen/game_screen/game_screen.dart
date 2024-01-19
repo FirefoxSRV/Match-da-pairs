@@ -83,6 +83,8 @@ class GameScreenState extends State<GameScreen> {
 
   @override
   void initState() {
+    _selected = Selected.easy;
+    setMode('easy');
     _isCountToStartTimer?.cancel();
     _switchModeTimer?.cancel();
     _resetGameState();
@@ -120,6 +122,13 @@ class GameScreenState extends State<GameScreen> {
       child: LayoutBuilder(builder: (context, constraints) {
         var width = constraints.maxWidth;
         var height = constraints.maxHeight;
+        Widget currentWidget;
+        if (points != 8) {
+           currentWidget = buildGameInProgress(height, context);
+        } else {
+           currentWidget = buildGameCompleteScreen();
+        }
+
         return Scaffold(
           appBar: points != 8
               ? AppBar(
@@ -142,159 +151,165 @@ class GameScreenState extends State<GameScreen> {
             transitionBuilder: (Widget child, Animation<double> animation) {
               return FadeTransition(opacity: animation, child: child);
             },
-            child: points != 8
-                ? Stack(
-                    children: [
-                      Scaffold(
-                        backgroundColor: Colors.transparent,
-                        floatingActionButtonLocation:
-                            FloatingActionButtonLocation.centerDocked,
-                        floatingActionButton:
-                            StatefulBuilder(builder: (context, setState) {
-                          return TimerFloatingActionButton(
-                            selected: _selected,
-                            showPoints: _showPoints,
-                            remainingTime: remainingTime,
-                            onTick: (UpdatedRemainingTime) {
-                              setState(() {
-                                remainingTime = UpdatedRemainingTime;
-                              });
-                            },
-                          );
-                        }),
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: height * 0.05,
-                          ),
-                          Container(
-                            height: height * 0.05,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.background,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Stack(
-                              children: [
-                                AnimatedPositioned(
-                                  duration: Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
-                                  left: _selected == Selected.easy
-                                      ? 0
-                                      : _selected == Selected.medium
-                                          ? MediaQuery.of(context).size.width / 3
-                                          : 2 *
-                                              MediaQuery.of(context).size.width /
-                                              3,
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width / 3,
-                                    height: height * 0.05,
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    _buildButton(Selected.easy, "Easy"),
-                                    _buildButton(Selected.medium, "Medium"),
-                                    _buildButton(Selected.hard, "Hard"),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 50, horizontal: 20),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          _showPoints ? "$points/8 " : "Memorize",
-                                          style: GoogleFonts.quicksand(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                        if (_showPoints) ...[
-                                          Text(
-                                            "Points",
-                                            style: GoogleFonts.quicksand(),
-                                          ),
-                                        ] else ...[
-                                          const Text(" "),
-                                        ],
-                                        const SizedBox(
-                                          height: 20,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                GridView(
-                                  shrinkWrap: true,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithMaxCrossAxisExtent(
-                                          mainAxisSpacing: 0.0,
-                                          maxCrossAxisExtent: 100),
-                                  children:
-                                      List.generate(hiddenDuos.length, (index) {
-                                    return Tile(
-                                      state: this,
-                                      pathToImage:
-                                          hiddenDuos[index].getImagePath(),
-                                      tileIndex: index,
-                                    );
-                                  }),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      _showPoints
-                                          ? "$tries "
-                                          : "You have $remainingSeconds seconds",
-                                      style: GoogleFonts.quicksand(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                    if (_showPoints) ...[
-                                      Text("Tries",
-                                          style: GoogleFonts.quicksand()),
-                                    ] else ...[
-                                      const Text(" "),
-                                    ],
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                : GameCompleteScreen(
-                    selected: _selected,
-                    tries: tries,
-                    remainingTime: remainingTime,
-                    points: points,
-                  ),
+            child: currentWidget
           ),
         );
       }),
     );
+  }
+
+  GameCompleteScreen buildGameCompleteScreen() {
+    return GameCompleteScreen(
+              selected: _selected,
+              tries: tries,
+              remainingTime: remainingTime,
+              points: points,
+    );
+  }
+
+  Stack buildGameInProgress(double height, BuildContext context) {
+    return Stack(
+                  children: [
+                    Scaffold(
+                      backgroundColor: Colors.transparent,
+                      floatingActionButtonLocation:
+                          FloatingActionButtonLocation.centerDocked,
+                      floatingActionButton:
+                          StatefulBuilder(builder: (context, setState) {
+                        return TimerFloatingActionButton(
+                          selected: _selected,
+                          showPoints: _showPoints,
+                          remainingTime: remainingTime,
+                          onTick: (UpdatedRemainingTime) {
+                            setState(() {
+                              remainingTime = UpdatedRemainingTime;
+                            });
+                          },
+                        );
+                      }),
+                    ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: height * 0.05,
+                        ),
+                        Container(
+                          height: height * 0.05,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.background,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Stack(
+                            children: [
+                              AnimatedPositioned(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                left: _selected == Selected.easy
+                                    ? 0
+                                    : _selected == Selected.medium
+                                        ? MediaQuery.of(context).size.width / 3
+                                        : 2 *
+                                            MediaQuery.of(context).size.width /
+                                            3,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  height: height * 0.05,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  _buildButton(Selected.easy, "Easy"),
+                                  _buildButton(Selected.medium, "Medium"),
+                                  _buildButton(Selected.hard, "Hard"),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 50, horizontal: 20),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        _showPoints ? "$points/8 " : "Memorize",
+                                        style: GoogleFonts.quicksand(
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      if (_showPoints) ...[
+                                        Text(
+                                          "Points",
+                                          style: GoogleFonts.quicksand(),
+                                        ),
+                                      ] else ...[
+                                        const Text(" "),
+                                      ],
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              GridView(
+                                shrinkWrap: true,
+                                gridDelegate:
+                                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                                        mainAxisSpacing: 0.0,
+                                        maxCrossAxisExtent: 100),
+                                children:
+                                    List.generate(hiddenDuos.length, (index) {
+                                  return Tile(
+                                    state: this,
+                                    pathToImage:
+                                        hiddenDuos[index].getImagePath(),
+                                    tileIndex: index,
+                                  );
+                                }),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    _showPoints
+                                        ? "$tries "
+                                        : "You have $remainingSeconds seconds",
+                                    style: GoogleFonts.quicksand(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700),
+                                  ),
+                                  if (_showPoints) ...[
+                                    Text("Tries",
+                                        style: GoogleFonts.quicksand()),
+                                  ] else ...[
+                                    const Text(" "),
+                                  ],
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
   }
 
   Future<dynamic> buildExitDialog(BuildContext context, double height) {
