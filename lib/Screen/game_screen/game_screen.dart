@@ -336,6 +336,7 @@ class GameScreenState extends State<GameScreen> {
   }
 
   Widget _buildButton(Selected level, String text) {
+    double height = MediaQuery.of(context).size.height;
     bool isSelected = _selected == level;
     Color textColor = isSelected
         ? Theme.of(context).colorScheme.secondary
@@ -345,16 +346,37 @@ class GameScreenState extends State<GameScreen> {
       child: InkWell(
         splashColor: null,
         onTap: () {
-          if (_selected != level) {
-            setState(() {
-              _selected = level;
-              setMode(level.toString().split(".").last);
-              _resetGameState();
-              if (_selected != Selected.easy) {
-                resetRemainingTime();
-              }
-            });
-          }
+          showDialog(context: context, builder: (context){
+            return OpenMaterialAlertDialog(containerHeight: height, title: "Change mode", content: "You will lose track of the current mode.",actions: [
+              MaterialButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: (){
+                  Navigator.pop(context);
+                  if (_selected != level) {
+                    setState(() {
+                      _selected = level;
+                      setMode(level.toString().split(".").last);
+                      _resetGameState();
+                      if (_selected != Selected.easy) {
+                        resetRemainingTime();
+                      }
+                    });
+                  }
+
+                },
+                child: Text("Ok",style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontWeight: FontWeight.bold),),
+              ),
+              MaterialButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),side: BorderSide(color: Theme.of(context).colorScheme.tertiary)),
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              )
+            ],);
+          });
+
         },
         child: Container(
           height: double.infinity,
