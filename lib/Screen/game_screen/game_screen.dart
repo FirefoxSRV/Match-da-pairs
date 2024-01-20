@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../Logic/functions_objects.dart';
-import '../../Material_components/material_alert_dialog.dart';
-import '../final_screen/game_complete_screen.dart';
+import 'game_screen_utils/material_alert_dialog.dart';
+import '../final_screen/final_screen.dart';
 import 'game_screen_utils/tile.dart';
 import 'game_screen_utils/timer_floating_action_button.dart';
 

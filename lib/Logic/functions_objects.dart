@@ -3,7 +3,7 @@ int points = 0;
 int tries = 0;
 bool loadSelect = false;
 
-int remainingTime = 70;
+int remainingTime = 120;
 String selectedImagePath = "";
 late int selectedTileIndex;
 String mode = "easy";
@@ -14,7 +14,7 @@ enum Selected { easy, medium, hard }
 
 
 void resetRemainingTime(){
-  remainingTime = 70;
+  remainingTime = 120;
 }
 
 void setMode(String newMode){

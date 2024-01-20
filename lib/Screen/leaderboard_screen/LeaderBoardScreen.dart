@@ -18,6 +18,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
   Query dbRef  = FirebaseDatabase.instance.ref().child('Players').orderByChild("points");
 
   List<Map> players = [];
+  bool _isLoading = true;
 
   void fetchPlayers() {
     dbRef.once().then((DatabaseEvent event) {
@@ -26,6 +27,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
         players = values.entries.map((e) => {"key": e.key, ...e.value}).toList();
         setState(() {
           players.sort((a, b) => int.parse(b['points']).compareTo(int.parse(a['points'])));
+          _isLoading = false;
         });
       }
     });
@@ -60,7 +62,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                   children: [
                     Center(child: Text(rank.toString(), style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontSize: 25))),
                     CircleAvatar(
-                      backgroundColor: Colors.transparent, // Set to transparent or any background color
+                      backgroundColor: Colors.transparent,
                       child: ClipOval(
                         child: Image.network(
                           player['displayUrl'].toString(),
@@ -100,7 +102,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
               backgroundColor:Theme.of(context).scaffoldBackgroundColor ,
               title: Text("Leaderboard",style: GoogleFonts.quicksand(fontWeight: FontWeight.bold,fontSize: 32,color: Theme.of(context).colorScheme.tertiary),),
             ),
-            body: Column(
+            body: _isLoading?Center(child: CircularProgressIndicator(),):Column(
               children: [
                 SizedBox(height: 10,),
                 Flexible(

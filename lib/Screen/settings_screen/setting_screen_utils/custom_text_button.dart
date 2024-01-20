@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
+import 'package:mem_game/Logic/google_user_info.dart';
+import 'google_logic.dart';
 
 
 class CustomTextButton extends StatelessWidget {
@@ -33,19 +34,19 @@ class CustomTextButton extends StatelessWidget {
             padding:EdgeInsets.only(left: containerWidth/6.1),
             child: Text(title,
                 style: GoogleFonts.quicksand(
-                    fontSize: 20.0, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary)),
+                    fontSize: 20.0, fontWeight: FontWeight.bold,color: selfUser.email !=""?Theme.of(context).colorScheme.tertiary:Colors.grey)),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [Padding(
               padding: EdgeInsets.only(bottom: containerHeight/42.264,left: containerWidth/20.57),
-              child: FaIcon(fontAwesomeIcon,color: Theme.of(context).colorScheme.tertiary,),
+              child: FaIcon(fontAwesomeIcon,color: selfUser.email!=""?Theme.of(context).colorScheme.tertiary:Colors.grey,),
             ),
               SizedBox(width: containerWidth/16.45,),
               Expanded(
                 child: Text(
                     content,
-                    style: GoogleFonts.quicksand(fontSize: 16.0,color: Theme.of(context).colorScheme.tertiary)),
+                    style: GoogleFonts.quicksand(fontSize: 16.0,color: selfUser.email!=""?Theme.of(context).colorScheme.tertiary:Colors.grey)),
               ),
             ],
           ),

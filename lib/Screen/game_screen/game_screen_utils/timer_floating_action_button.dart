@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../Logic/functions_objects.dart';
-import '../../final_screen/game_complete_screen.dart';
+import '../../final_screen/final_screen.dart';
 
 class TimerFloatingActionButton extends StatefulWidget {
   Selected selected;

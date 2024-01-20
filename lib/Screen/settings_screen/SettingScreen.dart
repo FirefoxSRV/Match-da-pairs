@@ -1,15 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mem_game/Logic/google_user_info.dart';
 import 'package:mem_game/Logic/shared_preferences.dart';
-import 'package:mem_game/Material_components/material_alert_dialog.dart';
+import 'package:mem_game/Screen/game_screen/game_screen_utils/material_alert_dialog.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/google_logic.dart';
 import 'package:mem_game/Screen/settings_screen/setting_screen_utils/sign_in_button.dart';
-import '../../Material_components/material_switch.dart';
+import 'setting_screen_utils/material_switch.dart';
 import 'setting_screen_utils/custom_circular_progress_indicator.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -66,15 +67,23 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: containerHeight / 50,
               ),
             ),
+            // SliverToBoxAdapter(
+            //   child: CustomTextButton(
+            //     onPressed: () {},
+            //     content: "The data of your cards are stored locally and secured using your fingerprint .",
+            //     title: 'Store your data locally !',
+            //     containerWidth: containerWidth,
+            //     containerHeight: containerHeight,
+            //     fontAwesomeIcon: FontAwesomeIcons.folder,
+            //   ),
+            // ),
+            // SliverToBoxAdapter(
+            //   child: SizedBox(
+            //     height: containerHeight / 30.26,
+            //   ),
+            // ),
             SliverToBoxAdapter(
-              child: CustomTextButton(
-                onPressed: () {},
-                content: "The data of your cards are stored locally and secured using your fingerprint .",
-                title: 'Store your data locally !',
-                containerWidth: containerWidth,
-                containerHeight: containerHeight,
-                fontAwesomeIcon: FontAwesomeIcons.folder,
-              ),
+              child: userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
             ),
             SliverToBoxAdapter(
               child: SizedBox(
@@ -82,11 +91,72 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child: userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
+              child: CustomTextButton(
+                onPressed: () {
+                  if(selfUser.email !=""){
+                    showDialog(context: context, builder: (context){
+                      return OpenMaterialAlertDialog(containerHeight: containerHeight, title: 'Delete', content: 'Are you sure on destroying your progress from the database ?',actions: [
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          color: Theme.of(context).colorScheme.primary,
+                          onPressed: () {
+                            try {
+                              DatabaseReference dbRef = FirebaseDatabase.instance.ref('Players');
+                              Query query = dbRef.orderByChild('email').equalTo(selfUser.email);
+                              query.once().then((DatabaseEvent event) {
+                                if (event.snapshot.exists) {
+                                  Map<dynamic, dynamic> values = event.snapshot.value as Map<dynamic, dynamic>;
+                                  values.forEach((key, value) {
+                                    if (value['email'] == selfUser.email) {
+                                      dbRef.child(key).remove(); // Removes the user data from the database
+                                    }
+                                  });
+                                }
+                              });
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("User data deleted successfully")));
+                            } catch (error) {
+                              // Handle any errors
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error deleting user data: $error")));
+                            }
+
+                          },
+                          child: Text(
+                            "Yes",
+                            style: GoogleFonts.quicksand(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        MaterialButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(
+                                  color: Theme.of(context).colorScheme.tertiary)),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Cancel"),
+                        )
+                      ],);
+                    });
+                  }
+
+                },
+                content: "Your history along with your leaderboard standings will be removed from the database .",
+                title: 'Delete History',
+                containerWidth: containerWidth,
+                containerHeight: containerHeight,
+                fontAwesomeIcon: FontAwesomeIcons.trash,
+              ),
             ),
             SliverToBoxAdapter(
               child: Center(
-                child: MaterialSwitch(value: but, onChanged: (but) {}),
+                child: MaterialSwitch(
+                    value: but, onChanged: (but) {
+
+                },),
               ),
             )
           ],
@@ -110,7 +180,6 @@ class _SettingScreenState extends State<SettingScreen> {
         try {
           user = await signInWithGoogle(_googleSignIn, _auth);
         } catch (error) {
-          print(error);
           showDialog(
               context: context,
               builder: (dialogContext) {
