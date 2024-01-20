@@ -6,6 +6,7 @@ import 'package:mem_game/constants.dart';
 import 'Screen/first_screen/my_app.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'Screen/leaderboard_screen/LeaderBoardScreen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,8 @@ void main() async{
   runApp(
     MaterialApp(
       themeMode: theme,
-      home: const MyApp(),
+      // home: const MyApp(),
+      home: const LeaderBoardScreen(),
       theme: lightTheme,
       darkTheme: darkTheme,
     ),

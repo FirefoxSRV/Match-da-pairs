@@ -115,7 +115,7 @@ class GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     double alertDialogHeightCalculator = MediaQuery.of(context).size.height;
     return WillPopScope(
-      onWillPop: () async{
+      onWillPop: () async {
         await buildExitDialog(context, alertDialogHeightCalculator);
         return true;
       },
@@ -124,9 +124,9 @@ class GameScreenState extends State<GameScreen> {
         var height = constraints.maxHeight;
         Widget currentWidget;
         if (points != 8) {
-           currentWidget = buildGameInProgress(height, context);
+          currentWidget = buildGameInProgress(height, context);
         } else {
-           currentWidget = buildGameCompleteScreen();
+          currentWidget = buildGameCompleteScreen();
         }
 
         return Scaffold(
@@ -146,13 +146,12 @@ class GameScreenState extends State<GameScreen> {
                 )
               : null,
           body: AnimatedSwitcher(
-            reverseDuration: Duration(milliseconds: 300),
-            duration: Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            child: currentWidget
-          ),
+              reverseDuration: Duration(milliseconds: 300),
+              duration: Duration(milliseconds: 300),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+              child: currentWidget),
         );
       }),
     );
@@ -160,179 +159,183 @@ class GameScreenState extends State<GameScreen> {
 
   GameCompleteScreen buildGameCompleteScreen() {
     return GameCompleteScreen(
-              selected: _selected,
-              tries: tries,
-              remainingTime: remainingTime,
-              points: points,
+      selected: _selected,
+      tries: tries,
+      remainingTime: remainingTime,
+      points: points,
     );
   }
 
   Stack buildGameInProgress(double height, BuildContext context) {
     return Stack(
-                  children: [
-                    Scaffold(
-                      backgroundColor: Colors.transparent,
-                      floatingActionButtonLocation:
-                          FloatingActionButtonLocation.centerDocked,
-                      floatingActionButton:
-                          StatefulBuilder(builder: (context, setState) {
-                        return TimerFloatingActionButton(
-                          selected: _selected,
-                          showPoints: _showPoints,
-                          remainingTime: remainingTime,
-                          onTick: (UpdatedRemainingTime) {
-                            setState(() {
-                              remainingTime = UpdatedRemainingTime;
-                            });
-                          },
-                        );
-                      }),
+      children: [
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: StatefulBuilder(builder: (context, setState) {
+            return TimerFloatingActionButton(
+              selected: _selected,
+              showPoints: _showPoints,
+              remainingTime: remainingTime,
+              onTick: (UpdatedRemainingTime) {
+                setState(() {
+                  remainingTime = UpdatedRemainingTime;
+                });
+              },
+            );
+          }),
+        ),
+        Column(
+          children: [
+            SizedBox(
+              height: height * 0.05,
+            ),
+            Container(
+              height: height * 0.05,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    left: _selected == Selected.easy
+                        ? 0
+                        : _selected == Selected.medium
+                            ? MediaQuery.of(context).size.width / 3
+                            : 2 * MediaQuery.of(context).size.width / 3,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      height: height * 0.05,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
-                    Column(
-                      children: [
-                        SizedBox(
-                          height: height * 0.05,
-                        ),
-                        Container(
-                          height: height * 0.05,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.background,
-                            borderRadius: BorderRadius.circular(20),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildButton(Selected.easy, "Easy"),
+                      _buildButton(Selected.medium, "Medium"),
+                      _buildButton(Selected.hard, "Hard"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _showPoints ? "$points/8 " : "Memorize",
+                            style: GoogleFonts.quicksand(
+                                fontSize: 24, fontWeight: FontWeight.w700),
                           ),
-                          child: Stack(
-                            children: [
-                              AnimatedPositioned(
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                                left: _selected == Selected.easy
-                                    ? 0
-                                    : _selected == Selected.medium
-                                        ? MediaQuery.of(context).size.width / 3
-                                        : 2 *
-                                            MediaQuery.of(context).size.width /
-                                            3,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  height: height * 0.05,
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  _buildButton(Selected.easy, "Easy"),
-                                  _buildButton(Selected.medium, "Medium"),
-                                  _buildButton(Selected.hard, "Hard"),
-                                ],
-                              ),
-                            ],
+                          if (_showPoints) ...[
+                            Text(
+                              "Points",
+                              style: GoogleFonts.quicksand(),
+                            ),
+                          ] else ...[
+                            const Text(" "),
+                          ],
+                          const SizedBox(
+                            height: 20,
                           ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 50, horizontal: 20),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        _showPoints ? "$points/8 " : "Memorize",
-                                        style: GoogleFonts.quicksand(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      if (_showPoints) ...[
-                                        Text(
-                                          "Points",
-                                          style: GoogleFonts.quicksand(),
-                                        ),
-                                      ] else ...[
-                                        const Text(" "),
-                                      ],
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              GridView(
-                                shrinkWrap: true,
-                                gridDelegate:
-                                    const SliverGridDelegateWithMaxCrossAxisExtent(
-                                        mainAxisSpacing: 0.0,
-                                        maxCrossAxisExtent: 100),
-                                children:
-                                    List.generate(hiddenDuos.length, (index) {
-                                  return Tile(
-                                    state: this,
-                                    pathToImage:
-                                        hiddenDuos[index].getImagePath(),
-                                    tileIndex: index,
-                                  );
-                                }),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    _showPoints
-                                        ? "$tries "
-                                        : "You have $remainingSeconds seconds",
-                                    style: GoogleFonts.quicksand(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  if (_showPoints) ...[
-                                    Text("Tries",
-                                        style: GoogleFonts.quicksand()),
-                                  ] else ...[
-                                    const Text(" "),
-                                  ],
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  GridView(
+                    shrinkWrap: true,
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                            mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
+                    children: List.generate(hiddenDuos.length, (index) {
+                      return Tile(
+                        state: this,
+                        pathToImage: hiddenDuos[index].getImagePath(),
+                        tileIndex: index,
+                      );
+                    }),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _showPoints
+                            ? "$tries "
+                            : "You have $remainingSeconds seconds",
+                        style: GoogleFonts.quicksand(
+                            fontSize: 24, fontWeight: FontWeight.w700),
+                      ),
+                      if (_showPoints) ...[
+                        Text("Tries", style: GoogleFonts.quicksand()),
+                      ] else ...[
+                        const Text(" "),
                       ],
-                    ),
-                  ],
-                );
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Future<dynamic> buildExitDialog(BuildContext context, double height) {
-    return showDialog(context: context, builder: (context){
-                      return OpenMaterialAlertDialog(title: "Exit",content: "This will reset your progress.",containerHeight: height*0.5,actions: [
-                        MaterialButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          color: Theme.of(context).colorScheme.primary,
-                          onPressed: (){
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text("Ok",style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontWeight: FontWeight.bold),),
-                        ),
-                        MaterialButton(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),side: BorderSide(color: Theme.of(context).colorScheme.tertiary)),
-                          onPressed: (){
-                            Navigator.pop(context);
-                          },
-                          child: Text("Cancel"),
-                        )
-                      ],);
-                    });
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return OpenMaterialAlertDialog(
+            title: "Exit",
+            content: "This will reset your progress.",
+            containerHeight: height * 0.5,
+            actions: [
+              MaterialButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "Ok",
+                  style: GoogleFonts.quicksand(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
+              MaterialButton(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.tertiary)),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("Cancel"),
+              )
+            ],
+          );
+        });
   }
 
   Widget _buildButton(Selected level, String text) {
@@ -346,37 +349,51 @@ class GameScreenState extends State<GameScreen> {
       child: InkWell(
         splashColor: null,
         onTap: () {
-          showDialog(context: context, builder: (context){
-            return OpenMaterialAlertDialog(containerHeight: height, title: "Change mode", content: "You will lose track of the current mode.",actions: [
-              MaterialButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: (){
-                  Navigator.pop(context);
-                  if (_selected != level) {
-                    setState(() {
-                      _selected = level;
-                      setMode(level.toString().split(".").last);
-                      _resetGameState();
-                      if (_selected != Selected.easy) {
-                        resetRemainingTime();
-                      }
-                    });
-                  }
-
-                },
-                child: Text("Ok",style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontWeight: FontWeight.bold),),
-              ),
-              MaterialButton(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),side: BorderSide(color: Theme.of(context).colorScheme.tertiary)),
-                onPressed: (){
-                  Navigator.pop(context);
-                },
-                child: Text("Cancel"),
-              )
-            ],);
-          });
-
+          showDialog(
+              context: context,
+              builder: (context) {
+                return OpenMaterialAlertDialog(
+                  containerHeight: height,
+                  title: "Change mode",
+                  content: "You will lose track of the current mode.",
+                  actions: [
+                    MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      color: Theme.of(context).colorScheme.primary,
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (_selected != level) {
+                          setState(() {
+                            _selected = level;
+                            setMode(level.toString().split(".").last);
+                            _resetGameState();
+                            if (_selected != Selected.easy) {
+                              resetRemainingTime();
+                            }
+                          });
+                        }
+                      },
+                      child: Text(
+                        "Ok",
+                        style: GoogleFonts.quicksand(
+                            color: Theme.of(context).colorScheme.secondary,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                              color: Theme.of(context).colorScheme.tertiary)),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Cancel"),
+                    )
+                  ],
+                );
+              });
         },
         child: Container(
           height: double.infinity,

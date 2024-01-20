@@ -82,8 +82,7 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
             ),
             SliverToBoxAdapter(
-              child:
-                  userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
+              child: userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
             ),
             SliverToBoxAdapter(
               child: Center(
@@ -167,38 +166,70 @@ class _SettingScreenState extends State<SettingScreen> {
   SignInButton userLoggedIn(BuildContext context, double containerHeight, double containerWidth) {
     return SignInButton(
       onPressed: () {
-        setState(() {
-          _isSigningIn = true;
+
+        showDialog(context: context, builder: (context){
+           return OpenMaterialAlertDialog(title: "Sign Out",content: "Are you willing to sign out ?",containerHeight: containerHeight,actions: [
+            MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+              color: Theme.of(context).colorScheme.primary,
+              onPressed: (){
+                setState(() {
+                  _isSigningIn = true;
+                });
+
+                showLoadingDialog(context, "Signing out...");
+                try {
+                  signOut(_googleSignIn, _auth);
+                  selfUser.email = "";
+                  selfUser.displayName = "";
+                  selfUser.displayUrl = "";
+                  resetStoredData();
+                } catch (error) {
+                  print(error);
+                  showDialog(
+                      context: context,
+                      builder: (dialogContext) {
+                        return OpenMaterialAlertDialog(
+                          title: 'An error while signing out occurred',
+                          containerHeight: containerHeight,
+                          content: 'An error occurred while signing out with Google',
+                        );
+                      });
+                } finally {
+                  Navigator.of(context, rootNavigator: true).pop();
+                }
+
+                setState(() {
+                  _isSigningIn = false;
+                });
+                setState(() {
+                  userAvailable = false;
+                });
+                Navigator.pop(context);
+              },
+              child: Text(
+                "Ok",
+                style: GoogleFonts.quicksand(
+                    color: Theme.of(context).colorScheme.secondary,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.tertiary)),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("Cancel"),
+            )
+          ],);
         });
 
-        showLoadingDialog(context, "Signing out...");
-        try {
-          signOut(_googleSignIn, _auth);
-          selfUser.email = "";
-          selfUser.displayName = "";
-          selfUser.displayUrl = "";
-          resetStoredData();
-        } catch (error) {
-          print(error);
-          showDialog(
-              context: context,
-              builder: (dialogContext) {
-                return OpenMaterialAlertDialog(
-                  title: 'An error while signing out occurred',
-                  containerHeight: containerHeight,
-                  content: 'An error occurred while signing out with Google',
-                );
-              });
-        } finally {
-          Navigator.of(context, rootNavigator: true).pop();
-        }
 
-        setState(() {
-          _isSigningIn = false;
-        });
-        setState(() {
-          userAvailable = false;
-        });
+
       },
       title: "You are signed in with Google",
       fontAwesomeIcon: FontAwesomeIcons.check,

@@ -10,7 +10,6 @@ class SelfUser{
   String displayUrl="";
 
 
-
   void classMapper(User? user){
     if(user!=null){
       displayName = user.displayName!;
