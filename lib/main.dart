@@ -17,8 +17,8 @@ void main() async{
   runApp(
     MaterialApp(
       themeMode: theme,
-      // home: const MyApp(),
-      home: const LeaderBoardScreen(),
+      home: const MyApp(),
+      // home: const LeaderBoardScreen(),
       theme: lightTheme,
       darkTheme: darkTheme,
     ),

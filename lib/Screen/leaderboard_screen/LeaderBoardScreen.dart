@@ -102,7 +102,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
             ),
             body: Column(
               children: [
-                Divider(endIndent: width*0.31,indent: width*0.31,thickness: 1,color: Theme.of(context).colorScheme.tertiary,),
+                SizedBox(height: 10,),
                 Flexible(
                   child: ListView.builder(
                     itemCount: players.length,
