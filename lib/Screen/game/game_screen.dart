@@ -7,7 +7,7 @@ import '../../Logic/functions_objects.dart';
 import 'game_screen_utils/difficulty_bar.dart';
 import 'game_screen_utils/exit_dialog.dart';
 import 'game_screen_utils/material_alert_dialog.dart';
-import '../final_screen/final_screen.dart';
+import '../game_end/final_screen.dart';
 import 'game_screen_utils/tile.dart';
 import 'game_screen_utils/timer_floating_action_button.dart';
 
