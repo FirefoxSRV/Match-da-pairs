@@ -15,7 +15,6 @@ Future<User?> signInWithGoogle(GoogleSignIn googleSignIn,FirebaseAuth auth) asyn
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      print("GOOd, working");
       final UserCredential authResult = await auth.signInWithCredential(credential);
       final User? user = authResult.user;
       selfUser.classMapper(user);
@@ -26,8 +25,8 @@ Future<User?> signInWithGoogle(GoogleSignIn googleSignIn,FirebaseAuth auth) asyn
     if (kDebugMode) {
       print(error);
     }
-    return null;
   }
+  return null;
 }
 
 
