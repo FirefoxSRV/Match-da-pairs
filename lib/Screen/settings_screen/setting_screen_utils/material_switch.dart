@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../constants.dart';
+import '../../themes/theme_provider.dart';
 
 
 class MaterialSwitch extends StatefulWidget {
@@ -12,29 +14,35 @@ class MaterialSwitch extends StatefulWidget {
 }
 
 class _MaterialSwitchState extends State<MaterialSwitch> {
-  bool value;
+  late bool value;
   Function onChanged;
   _MaterialSwitchState(this.value, this.onChanged);
 
-  Future<void> onSwitchPress() async{
-    try{
-      await onChanged(!value);
-      if(value){
-        setOff();
-      }else{
-        setOn();
-      }
-    }catch(e){
+
+
+
+  Future<void> onSwitchPress() async {
+    try {
+      var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+      var newThemeMode = themeProvider.themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      themeProvider.themeMode = newThemeMode;
+      await onChanged(value);
+      setState(() {
+        value = !value;
+      });
+    } catch (e) {
       return Future.error(e);
     }
   }
 
 
+
+
   void setOn(){
     setState(() {
-
+      value = true;
     });
-    value = true;
+
   }
 
   void setOff(){
@@ -79,3 +87,4 @@ class _MaterialSwitchState extends State<MaterialSwitch> {
     );
   }
 }
+

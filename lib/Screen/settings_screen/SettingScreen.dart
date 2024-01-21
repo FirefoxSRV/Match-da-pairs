@@ -67,21 +67,6 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: containerHeight / 50,
               ),
             ),
-            // SliverToBoxAdapter(
-            //   child: CustomTextButton(
-            //     onPressed: () {},
-            //     content: "The data of your cards are stored locally and secured using your fingerprint .",
-            //     title: 'Store your data locally !',
-            //     containerWidth: containerWidth,
-            //     containerHeight: containerHeight,
-            //     fontAwesomeIcon: FontAwesomeIcons.folder,
-            //   ),
-            // ),
-            // SliverToBoxAdapter(
-            //   child: SizedBox(
-            //     height: containerHeight / 30.26,
-            //   ),
-            // ),
             SliverToBoxAdapter(
               child: userAvailable && selfUser.displayName != ''? userLoggedIn(context, containerHeight, containerWidth) : userNotLoggedIn(context, containerHeight, containerWidth),
             ),
@@ -154,7 +139,8 @@ class _SettingScreenState extends State<SettingScreen> {
             SliverToBoxAdapter(
               child: Center(
                 child: MaterialSwitch(
-                    value: but, onChanged: (but) {
+                  value: but,
+                    onChanged: (but) {
 
                 },),
               ),
@@ -304,7 +290,7 @@ class _SettingScreenState extends State<SettingScreen> {
       fontAwesomeIcon: FontAwesomeIcons.check,
       containerWidth: containerWidth,
       containerHeight: containerHeight,
-      content: 'Signed in as ${selfUser?.displayName} \nClick to sign out',
+      content: 'Signed in as ${selfUser.displayName} \nClick to sign out',
       isLoading: _isSigningIn,
     );
   }

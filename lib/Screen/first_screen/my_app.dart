@@ -11,6 +11,7 @@ import '../game_screen/game_screen.dart';
 import '../settings_screen/SettingScreen.dart';
 import '../themes/dark_theme.dart';
 import '../themes/light_theme.dart';
+import '../themes/theme_provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 openBuilder: (BuildContext context, VoidCallback closeContainer) {
-                  return const SettingScreen();
+                  return SettingScreen();
                 },
                 closedBuilder: (BuildContext context, VoidCallback openContainer) {
                   return FloatingActionButton(
