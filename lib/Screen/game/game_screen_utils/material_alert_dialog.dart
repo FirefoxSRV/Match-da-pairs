@@ -42,27 +42,32 @@ class OpenMaterialAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.0)
-        ),
-        title: Center(
-          child: Text(
-            title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.quicksand(fontSize: 25,fontWeight: FontWeight.w600),
-          ),
-        ),
-        content: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SizedBox(
-              width: 300,
-              height: containerHeight * 0.1,
-              child: Text(content,style: GoogleFonts.quicksand(fontSize: 18,fontWeight: FontWeight.normal,color: Theme.of(context).disabledColor),)
-          ),
-        ),
-      actions: actions,
+    return LayoutBuilder(
+      builder: (context,constraints) {
+        double width = constraints.maxWidth;
+        return AlertDialog(
+            backgroundColor: Theme.of(context).dialogBackgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0)
+            ),
+            title: Center(
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.quicksand(fontSize: 25,fontWeight: FontWeight.w600),
+              ),
+            ),
+            content: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                  width: width*0.7,
+                  height: containerHeight * 0.1,
+                  child: Center(child: Text(content,style: GoogleFonts.quicksand(fontSize: 18,fontWeight: FontWeight.normal,color: Theme.of(context).disabledColor),))
+              ),
+            ),
+          actions: actions,
+        );
+      }
     );
   }
 }

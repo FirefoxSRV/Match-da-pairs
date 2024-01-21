@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../Logic/functions_objects.dart';
 import '../game_screen.dart';
+import 'functions.dart';
 
 class Tile extends StatefulWidget {
   String pathToImage;
@@ -27,7 +28,6 @@ class _TileState extends State<Tile> {
         if (selectedImagePath == itemDuos[widget.tileIndex].getImagePath()) {
           tries = tries + 1;
           playCorrectSound();
-          print("Correct");
           loadSelect = true;
           Future.delayed(const Duration(seconds: 1), () {
             if (!mounted) return;
@@ -59,7 +59,6 @@ class _TileState extends State<Tile> {
           });
         }
       } else {
-        print("1 select");
         selectedTileIndex = widget.tileIndex;
         selectedImagePath = itemDuos[widget.tileIndex].getImagePath();
       }

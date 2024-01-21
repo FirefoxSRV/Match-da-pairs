@@ -4,22 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../Logic/functions_objects.dart';
+import 'game_screen_utils/difficulty_bar.dart';
+import 'game_screen_utils/exit_dialog.dart';
 import 'game_screen_utils/material_alert_dialog.dart';
 import '../final_screen/final_screen.dart';
 import 'game_screen_utils/tile.dart';
 import 'game_screen_utils/timer_floating_action_button.dart';
-
-void playCorrectSound() async {
-  final player = AudioPlayer();
-  const soundPath = "audio/success.mp3";
-  await player.play(AssetSource(soundPath), volume: 0.5);
-}
-
-void playWrongSound() async {
-  final player = AudioPlayer();
-  const soundPath = "audio/wrong.mp3";
-  await player.play(AssetSource(soundPath));
-}
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
@@ -146,8 +136,8 @@ class GameScreenState extends State<GameScreen> {
                 )
               : null,
           body: AnimatedSwitcher(
-              reverseDuration: Duration(milliseconds: 300),
-              duration: Duration(milliseconds: 300),
+              reverseDuration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(opacity: animation, child: child);
               },
@@ -178,9 +168,9 @@ class GameScreenState extends State<GameScreen> {
               selected: _selected,
               showPoints: _showPoints,
               remainingTime: remainingTime,
-              onTick: (UpdatedRemainingTime) {
+              onTick: (updatedRemainingTIme) {
                 setState(() {
-                  remainingTime = UpdatedRemainingTime;
+                  remainingTime = updatedRemainingTIme;
                 });
               },
             );
@@ -199,29 +189,13 @@ class GameScreenState extends State<GameScreen> {
               ),
               child: Stack(
                 children: [
-                  AnimatedPositioned(
-                    duration: Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    left: _selected == Selected.easy
-                        ? 0
-                        : _selected == Selected.medium
-                            ? MediaQuery.of(context).size.width / 3
-                            : 2 * MediaQuery.of(context).size.width / 3,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 3,
-                      height: height * 0.05,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
+                  DifficultyBar(selected: _selected,height: height,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildButton(Selected.easy, "Easy"),
-                      _buildButton(Selected.medium, "Medium"),
-                      _buildButton(Selected.hard, "Hard"),
+                      _buildChangeModeButton(Selected.easy, "Easy"),
+                      _buildChangeModeButton(Selected.medium, "Medium"),
+                      _buildChangeModeButton(Selected.hard, "Hard"),
                     ],
                   ),
                 ],
@@ -299,46 +273,9 @@ class GameScreenState extends State<GameScreen> {
     );
   }
 
-  Future<dynamic> buildExitDialog(BuildContext context, double height) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return OpenMaterialAlertDialog(
-            title: "Exit",
-            content: "This will reset your progress.",
-            containerHeight: height * 0.5,
-            actions: [
-              MaterialButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  "Ok",
-                  style: GoogleFonts.quicksand(
-                      color: Theme.of(context).colorScheme.secondary,
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              MaterialButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                        color: Theme.of(context).colorScheme.tertiary)),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text("Cancel"),
-              )
-            ],
-          );
-        });
-  }
 
-  Widget _buildButton(Selected level, String text) {
+
+  Widget _buildChangeModeButton(Selected level, String text) {
     double height = MediaQuery.of(context).size.height;
     bool isSelected = _selected == level;
     Color textColor = isSelected

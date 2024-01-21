@@ -29,6 +29,7 @@
 //       themeProvider.themeMode = newThemeMode;
 //       await onChanged(!value);
 //       setState(() {
+
 //         value = !value;
 //       });
 //     } catch (e) {

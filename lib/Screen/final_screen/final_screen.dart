@@ -1,9 +1,9 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mem_game/Screen/leaderboard_screen/LeaderBoardScreen.dart';
+import 'package:mem_game/Screen/leaderboard/LeaderBoardScreen.dart';
 import '../../Logic/functions_objects.dart';
-import '../first_screen/my_app.dart';
+import '../landing_page.dart';
 import '../../Logic/google_user_info.dart';
 import 'final_screen_utils/custom_button_layout.dart';
 import 'final_screen_utils/final_screen_functions.dart';

@@ -1,34 +1,9 @@
 import 'package:animations/animations.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import '../../Logic/shared_preferences.dart';
-import '../game_screen/game_screen_utils/material_alert_dialog.dart';
-import '../../constants.dart';
-import '../../firebase_options.dart';
-import '../game_screen/game_screen.dart';
-import '../settings_screen/SettingScreen.dart';
-import '../themes/dark_theme.dart';
-import '../themes/light_theme.dart';
-import '../themes/theme_provider.dart';
-
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await getStoredData();
-  runApp(
-    MaterialApp(
-      themeMode: theme,
-      home: const MyApp(),
-      theme: lightTheme,
-      darkTheme: darkTheme,
-    ),
-  );
-}
-
+import 'game/game_screen_utils/material_alert_dialog.dart';
+import 'game/game_screen.dart';
+import 'settings/settings_screen.dart';
 
 
 class MyApp extends StatefulWidget {

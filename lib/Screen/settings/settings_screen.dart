@@ -6,13 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:mem_game/Logic/google_user_info.dart';
 import 'package:mem_game/Logic/shared_preferences.dart';
-import 'package:mem_game/Screen/game_screen/game_screen_utils/material_alert_dialog.dart';
-import 'package:mem_game/Screen/settings_screen/setting_screen_utils/custom_text_button.dart';
-import 'package:mem_game/Screen/settings_screen/setting_screen_utils/google_logic.dart';
-import 'package:mem_game/Screen/settings_screen/setting_screen_utils/sign_in_button.dart';
+import 'package:mem_game/Screen/game/game_screen_utils/material_alert_dialog.dart';
+import 'package:mem_game/Screen/settings/setting_screen_utils/custom_text_button.dart';
+import 'package:mem_game/Screen/settings/setting_screen_utils/google_logic.dart';
+import 'package:mem_game/Screen/settings/setting_screen_utils/sign_in_button.dart';
 import 'package:provider/provider.dart';
 import '../themes/theme_provider.dart';
-import 'setting_screen_utils/material_switch.dart';
 import 'setting_screen_utils/custom_circular_progress_indicator.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -26,6 +25,24 @@ class _SettingScreenState extends State<SettingScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isSigningIn = false;
+
+  Future<bool> isEmailInDatabase(String email) async {
+    try {
+      DatabaseReference dbRef = FirebaseDatabase.instance.ref('Players');
+      Query query = dbRef.orderByChild('email').equalTo(email);
+
+      DatabaseEvent event = await query.once();
+      if (event.snapshot.exists) {
+        Map<dynamic, dynamic> values = event.snapshot.value as Map<dynamic, dynamic>;
+        return values.values.any((value) => value['email'] == email);
+      }
+      return false;
+    } catch (error) {
+      print("Error checking email in database: $error");
+      return false;
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,81 +107,114 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               SliverToBoxAdapter(
                 child: CustomTextButton(
-                  onPressed: () {
+                  onPressed: () async{
                     if (selfUser.email != "") {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return OpenMaterialAlertDialog(
-                              containerHeight: containerHeight,
-                              title: 'Delete',
-                              content:
-                                  'Are you sure on destroying your progress from the database ?',
-                              actions: [
-                                MaterialButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  color: Theme.of(context).colorScheme.primary,
-                                  onPressed: () {
-                                    try {
-                                      DatabaseReference dbRef = FirebaseDatabase
-                                          .instance
-                                          .ref('Players');
-                                      Query query = dbRef
-                                          .orderByChild('email')
-                                          .equalTo(selfUser.email);
-                                      query.once().then((DatabaseEvent event) {
-                                        if (event.snapshot.exists) {
-                                          Map<dynamic, dynamic> values = event
-                                              .snapshot
-                                              .value as Map<dynamic, dynamic>;
-                                          values.forEach((key, value) {
-                                            if (value['email'] ==
-                                                selfUser.email) {
-                                              dbRef
-                                                  .child(key)
-                                                  .remove(); // Removes the user data from the database
-                                            }
-                                          });
-                                        }
-                                      });
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "User data deleted successfully")));
-                                    } catch (error) {
-                                      // Handle any errors
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Error deleting user data: $error")));
-                                    }
-                                  },
-                                  child: Text(
-                                    "Yes",
-                                    style: GoogleFonts.quicksand(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                MaterialButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
-                                      side: BorderSide(
+                      bool emailExists = await isEmailInDatabase(selfUser.email);
+                      if (emailExists) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return OpenMaterialAlertDialog(
+                                containerHeight: containerHeight,
+                                title: 'Delete',
+                                content:
+                                'Are you sure on destroying your progress from the database ?',
+                                actions: [
+                                  MaterialButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20)),
+                                    color: Theme.of(context).colorScheme.primary,
+                                    onPressed: () {
+                                      try {
+                                        DatabaseReference dbRef = FirebaseDatabase
+                                            .instance
+                                            .ref('Players');
+                                        Query query = dbRef
+                                            .orderByChild('email')
+                                            .equalTo(selfUser.email);
+                                        query.once().then((DatabaseEvent event) {
+                                          if (event.snapshot.exists) {
+                                            Map<dynamic, dynamic> values = event
+                                                .snapshot
+                                                .value as Map<dynamic, dynamic>;
+                                            values.forEach((key, value) {
+                                              if (value['email'] ==
+                                                  selfUser.email) {
+                                                dbRef
+                                                    .child(key)
+                                                    .remove(); // Removes the user data from the database
+                                              }
+                                            });
+                                          }
+                                        });
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "User data deleted successfully")));
+                                      } catch (error) {
+                                        // Handle any errors
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                            content: Text(
+                                                "Error deleting user data: $error")));
+                                      }
+                                    },
+                                    child: Text(
+                                      "Yes",
+                                      style: GoogleFonts.quicksand(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .tertiary)),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text("Cancel"),
-                                )
-                              ],
-                            );
-                          });
+                                              .secondary,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  MaterialButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: BorderSide(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary)),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Cancel"),
+                                  )
+                                ],
+                              );
+                            });
+                      }else{
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return OpenMaterialAlertDialog(
+                                containerHeight: containerHeight,
+                                title: 'Delete Error',
+                                content:
+                                'No data to delete',
+                                actions: [
+                                  // MaterialButton(
+                                  //   shape: RoundedRectangleBorder(
+                                  //       borderRadius: BorderRadius.circular(20)),
+                                  //   color: Theme.of(context).colorScheme.primary,
+                                  //   onPressed: () {
+                                  //     Navigator.pop(context);
+                                  //   },
+                                  //   child: Text(
+                                  //     "Ok",
+                                  //     style: GoogleFonts.quicksand(
+                                  //         color: Theme.of(context)
+                                  //             .colorScheme
+                                  //             .secondary,
+                                  //         fontWeight: FontWeight.bold),
+                                  //   ),
+                                  // ),
+                                ],
+                              );
+                            });
+                      }
+
                     }
                   },
                   content:
