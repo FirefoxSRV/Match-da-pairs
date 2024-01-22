@@ -67,7 +67,7 @@ int scoreCalculation(int tries, int timeLeft, Selected selected,int points) {
     return score;
   } else if (selected == Selected.hard) {
     if (points < 8){
-      return points*160;
+      return points*120;
     }
     int score = 1500 - (50 * (tries - 8)) + 5 * (timeLeft);
     return score;

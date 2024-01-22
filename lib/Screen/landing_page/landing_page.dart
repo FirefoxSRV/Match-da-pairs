@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mem_game/Logic/google_user_info.dart';
 import 'package:mem_game/Screen/landing_page/landing_page_utils/about_game_screen.dart';
 import '../game/game_screen_utils/material_alert_dialog.dart';
 import '../game/game_screen.dart';
@@ -23,10 +24,14 @@ class _MyAppState extends State<MyApp> {
     int dayHour = DateTime.now().hour;
     if (dayHour >= 0 && dayHour < 12) {
       greet = "Good Morning,";
+
     } else if (dayHour >= 12 && dayHour < 18) {
       greet = "Good Afternoon,";
     } else if (dayHour >= 18 && dayHour < 24) {
       greet = "Good Evening,";
+    }
+    if(selfUser.email !=""){
+      greet = greet + selfUser.displayName.split(' ').first;
     }
 
     return LayoutBuilder(
