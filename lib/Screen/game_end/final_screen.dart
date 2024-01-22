@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/leaderboard/LeaderBoardScreen.dart';
 import '../../Logic/functions_objects.dart';
-import '../landing_page.dart';
+import '../landing_page/landing_page.dart';
 import '../../Logic/google_user_info.dart';
 import 'final_screen_utils/custom_button_layout.dart';
 import 'final_screen_utils/final_screen_functions.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class GameCompleteScreen extends StatefulWidget {
   final Selected selected;
@@ -28,26 +29,59 @@ class GameCompleteScreen extends StatefulWidget {
 
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
-
-
+  late Future<void> _wait;
+  Future<ConnectivityResult> getConnectivity() async{
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return connectivityResult;
+  }
 
   @override
   void initState() {
-    score = scoreCalculation(tries, widget.remainingTime, widget.selected,points);   // scoreCalculation function in final_screen_functions
+    super.initState();
+    var connectivityResult = getConnectivity();
+    score = scoreCalculation(widget.tries, widget.remainingTime, widget.selected, widget.points);
     print(score);
     SelfUser user = selfUser;
     if (user.email != "") {
-      leaderboardPush(user, score);                                          // same here.....leaderboardPush in final_screen_functions
+      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+        leaderboardPush(user, score);
+      }
+
+
     } else {
       print("Not signed in");
     }
-    super.initState();
+    _wait = Future.delayed(Duration(seconds: 1));
+  }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _wait,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else {
+          return buildGameCompleteScreen(context);
+        }
+      },
+    );
   }
 
 
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildGameCompleteScreen(BuildContext context) {
     return PopScope(
       onPopInvoked: (didPop) {
         if (didPop) {
@@ -117,12 +151,23 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                           CustomButtonLayout(
                               containerWidth: containerWidth,
                               title: "Leaderboard",
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LeaderBoardScreen()));
+                              onPressed: () async{
+                                var connectivityResult = await (Connectivity().checkConnectivity());
+                                if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                          const LeaderBoardScreen()));
+                                }else{
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text("No internet connection"),
+                                    ),
+                                  );
+                                }
+
+
                               }),
                           CustomButtonLayout(
                             containerWidth: containerWidth,

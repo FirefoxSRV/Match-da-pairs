@@ -1,9 +1,10 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'game/game_screen_utils/material_alert_dialog.dart';
-import 'game/game_screen.dart';
-import 'settings/settings_screen.dart';
+import 'package:mem_game/Screen/landing_page/landing_page_utils/about_game_screen.dart';
+import '../game/game_screen_utils/material_alert_dialog.dart';
+import '../game/game_screen.dart';
+import '../settings/settings_screen.dart';
 
 
 class MyApp extends StatefulWidget {
@@ -87,9 +88,9 @@ class _MyAppState extends State<MyApp> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ParentMaterialAlertDialog(containerHeight: containerHeight,title: "About game",onPressed: (){
-                        showDialog(context: context, builder: (context){
-                          return OpenMaterialAlertDialog(title: "Alert",content: "This is just a normal dialog box",containerHeight: containerHeight);
-                        });
+                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return AboutGameScreen();
+                        }));
                       },),
                       ParentMaterialAlertDialog(containerHeight: containerHeight,title: "Play",onPressed: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context){
