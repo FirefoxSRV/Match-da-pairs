@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     if(selfUser.email !=""){
       greet = greet + selfUser.displayName.split(' ').first;
     }
-
+    // Landing page ui
     return LayoutBuilder(
         builder: (context,constraints) {
           var containerWidth = constraints.maxWidth;
