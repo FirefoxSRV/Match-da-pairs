@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:726323920460:android:f6111f6bef86f5bee13ee9",
         "android_client_info": {
-          "package_name": "com.example.mem_game"
+          "package_name": "com.shreyasvisweshwaran.matchdapairs"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "726323920460-n6o4fu7u4q6sr4k1nb81bbt3459sq4q7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.mem_game",
+            "package_name": "com.shreyasvisweshwaran.matchdapairs",
             "certificate_hash": "f0536f1d6b50a4056531d4abcaa68999b5c20cbc"
           }
         },
@@ -42,7 +42,7 @@
               "client_id": "726323920460-fjb6nko9lv62cvas0c246les74tbpp3h.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.memGame"
+                "bundle_id": "com.shreyasvisweshwaran.matchdapairs"
               }
             }
           ]

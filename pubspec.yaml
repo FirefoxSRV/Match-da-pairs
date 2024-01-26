@@ -48,6 +48,7 @@ dependencies:
   firebase_database: ^10.4.0
   provider: ^6.1.1
   connectivity_plus: ^5.0.2
+  rename: ^3.0.1
 
 dev_dependencies:
   flutter_test:
