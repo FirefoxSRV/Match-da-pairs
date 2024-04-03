@@ -13,11 +13,11 @@ class LeaderBoardScreen extends StatefulWidget {
   State<LeaderBoardScreen> createState() => _LeaderBoardScreenState();
 }
 
-final databaseReference = FirebaseDatabase.instance.ref("Players");
+final databaseReference = FirebaseDatabase.instance.ref("Leaderboard");
 
 class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
 
-  Query dbRef  = FirebaseDatabase.instance.ref().child('Players').orderByChild("points");
+  Query dbRef  = FirebaseDatabase.instance.ref().child('Leaderboard').orderByChild("points");
 
   List<Map> players = [];
   bool _isLoading = true;

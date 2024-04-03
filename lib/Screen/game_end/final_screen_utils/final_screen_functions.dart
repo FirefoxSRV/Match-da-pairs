@@ -6,8 +6,8 @@ void leaderboardPush(SelfUser user, int newPoints) async {
   final newEmail = user.email;
   final displayUrl = user.displayUrl;
   final displayName = user.displayName;
-  final databaseReference = FirebaseDatabase.instance.ref("Players");
-  Query dbRef = FirebaseDatabase.instance.ref().child('Players').orderByChild("points");
+  final databaseReference = FirebaseDatabase.instance.ref("Leaderboard");
+  Query dbRef = FirebaseDatabase.instance.ref().child('Leaderboard').orderByChild("points");
   dbRef.once().then((DatabaseEvent event) {
     if (event.snapshot.exists && points == 8) {
       Map<dynamic, dynamic> values =

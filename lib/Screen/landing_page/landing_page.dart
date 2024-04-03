@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:games_services/games_services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Logic/google_user_info.dart';
 import 'package:mem_game/Screen/landing_page/landing_page_utils/about_game_screen.dart';
@@ -16,10 +17,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
+  @override
+  void initState() {
+    GamesServices.signIn();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-
     late String greet;
     int dayHour = DateTime.now().hour;
     if (dayHour >= 0 && dayHour < 12) {

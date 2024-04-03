@@ -29,6 +29,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 
+
 android {
     namespace "com.example.mem_game"
     compileSdkVersion flutter.compileSdkVersion
@@ -67,11 +68,20 @@ android {
             storePassword keystoreProperties['storePassword']
         }
     }
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
             signingConfig signingConfigs.release
         }
     }
+
 
 }
 
@@ -80,6 +90,7 @@ flutter {
 }
 
 dependencies {
+    implementation "com.google.android.gms:play-services-games-v2:+"
     implementation 'com.google.android.recaptcha:recaptcha:18.4.0'
     implementation platform("com.google.firebase:firebase-bom:32.5.0")
     implementation "com.google.firebase:firebase-analytics"

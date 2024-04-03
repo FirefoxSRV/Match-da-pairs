@@ -30,27 +30,35 @@ class GameCompleteScreen extends StatefulWidget {
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
   late Future<void> _wait;
-  Future<ConnectivityResult> getConnectivity() async{
-    var connectivityResult = await (Connectivity().checkConnectivity());
+  Future<ConnectivityResult> getConnectivity() async {
+    return await Connectivity().checkConnectivity();
+  }
+  Future<ConnectivityResult> checkConnectivityAndProceed() async {
+    var connectivityResult = await getConnectivity();
     return connectivityResult;
   }
-
-  @override
-  void initState() {
-    super.initState();
-    var connectivityResult = getConnectivity();
-    score = scoreCalculation(widget.tries, widget.remainingTime, widget.selected, widget.points);
-    print(score);
+  Future<void> checkAndProceed() async {
+    var connectivityResult = await checkConnectivityAndProceed();
     SelfUser user = selfUser;
     if (user.email != "") {
       if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+        print("Success");
         leaderboardPush(user, score);
+        // leaderboardPush(user, 8);
+
       }
 
 
     } else {
       print("Not signed in");
     }
+  }
+  @override
+  void initState() {
+    super.initState();
+    score = scoreCalculation(widget.tries, widget.remainingTime, widget.selected, widget.points);
+    checkAndProceed();
+
     _wait = Future.delayed(Duration(seconds: 1));
   }
 
@@ -154,6 +162,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                               onPressed: () async{
                                 var connectivityResult = await (Connectivity().checkConnectivity());
                                 if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+                                  print("INTERNET THERE");
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(

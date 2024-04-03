@@ -49,6 +49,7 @@ dependencies:
   provider: ^6.1.1
   connectivity_plus: ^5.0.2
   rename: ^3.0.1
+  games_services: ^4.0.0
 
 dev_dependencies:
   flutter_test:
