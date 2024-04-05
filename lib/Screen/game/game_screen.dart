@@ -20,13 +20,11 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> {
   Timer? timeLeft;
-  bool _isMounted = false;
   bool _showPoints = false;
   Selected _selected = Selected.easy;
   Timer? _switchModeTimer;
   bool _isSwitchingModes = false;
   int remainingSeconds = 5;
-  bool _isCountToStart = false;
   Timer? _isCountToStartTimer;
 
   void startTimer() {
@@ -57,7 +55,7 @@ class GameScreenState extends State<GameScreen> {
     selectedImagePath = "";
     points = 0;
     remainingSeconds = 5;
-    _showPoints = false; // If already mounted , return without any operation
+    _showPoints = false;
     startTimer();
     _switchModeTimer = Timer(const Duration(seconds: 5), () {
       setState(() {
@@ -85,6 +83,7 @@ class GameScreenState extends State<GameScreen> {
     super.initState();
   }
 
+
   @override
   void dispose() {
     _isCountToStartTimer?.cancel();
@@ -110,7 +109,6 @@ class GameScreenState extends State<GameScreen> {
         return true;
       },
       child: LayoutBuilder(builder: (context, constraints) {
-        var width = constraints.maxWidth;
         var height = constraints.maxHeight;
         Widget currentWidget;
         if (points != 8) {
@@ -326,7 +324,7 @@ class GameScreenState extends State<GameScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("Cancel"),
+                      child: const Text("Cancel"),
                     )
                   ],
                 );
