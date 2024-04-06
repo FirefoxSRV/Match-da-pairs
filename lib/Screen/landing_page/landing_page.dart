@@ -39,7 +39,6 @@ class _MyAppState extends State<MyApp> {
     }
     return LayoutBuilder(
         builder: (context,constraints) {
-          var containerWidth = constraints.maxWidth;
           var containerHeight = constraints.maxHeight;
           return Scaffold(
             appBar: AppBar(
