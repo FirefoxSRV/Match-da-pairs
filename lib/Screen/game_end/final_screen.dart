@@ -1,4 +1,3 @@
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/leaderboard/LeaderBoardScreen.dart';
@@ -59,7 +58,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
     score = scoreCalculation(widget.tries, widget.remainingTime, widget.selected, widget.points);
     checkAndProceed();
 
-    _wait = Future.delayed(Duration(seconds: 1));
+    _wait = Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -74,7 +73,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
       future: _wait,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
+          return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -162,15 +161,15 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                               onPressed: () async{
                                 var connectivityResult = await (Connectivity().checkConnectivity());
                                 if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-                                  print("INTERNET THERE");
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                          const LeaderBoardScreen()));
+                                          const LeaderBoardScreen()),);
                                 }else{
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text("No internet connection"),
                                     ),
                                   );
