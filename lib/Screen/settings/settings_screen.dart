@@ -10,8 +10,6 @@ import 'package:mem_game/Screen/game/game_screen_utils/material_alert_dialog.dar
 import 'package:mem_game/Screen/settings/setting_screen_utils/custom_text_button.dart';
 import 'package:mem_game/Screen/settings/setting_screen_utils/google_logic.dart';
 import 'package:mem_game/Screen/settings/setting_screen_utils/sign_in_button.dart';
-import 'package:provider/provider.dart';
-import '../themes/theme_provider.dart';
 import 'setting_screen_utils/custom_circular_progress_indicator.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -38,7 +36,6 @@ class _SettingScreenState extends State<SettingScreen> {
       }
       return false;
     } catch (error) {
-      print("Error checking email in database: $error");
       return false;
     }
   }
@@ -46,10 +43,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-    bool value = themeProvider.themeMode == ThemeMode.light ? false : true;
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: LayoutBuilder(
         builder: (context, constraints) {
           late double containerHeight = constraints.maxHeight;
@@ -66,7 +61,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
-                backgroundColor: Theme.of(context).colorScheme.background,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 bottom: PreferredSize(
                   preferredSize: const Size(0, 40),
                   child: Text(

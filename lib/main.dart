@@ -23,7 +23,7 @@ void main() async{
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             themeMode: themeProvider.themeMode,
-            home:  MyApp(),
+            home:  const MyApp(),
             theme: lightTheme,
             darkTheme: darkTheme,
           );

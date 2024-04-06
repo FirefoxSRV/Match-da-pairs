@@ -30,7 +30,7 @@ class SignInButton extends StatelessWidget {
             padding:EdgeInsets.only(left: containerWidth/6.1),
             child: Text(title,
                 style: GoogleFonts.quicksand(
-                    fontSize: 20.0, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary)),
+                    fontSize: 20.0, fontWeight: FontWeight.bold,color: Theme.of(context).colorScheme.tertiary),),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,7 +42,7 @@ class SignInButton extends StatelessWidget {
               Expanded(
                 child: Text(
                     content,
-                    style: GoogleFonts.quicksand(fontSize: 16.0,color: Theme.of(context).colorScheme.tertiary)),
+                    style: GoogleFonts.quicksand(fontSize: 16.0,color: Theme.of(context).colorScheme.tertiary),),
               ),
             ],
           ),
