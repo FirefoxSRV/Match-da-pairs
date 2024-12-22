@@ -15,4 +15,4 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-[The App: Match da Pairs](https://play.google.com/store/apps/details?id=com.shreyasvisweshwaran.matchdapairs&pli=1)
+[Get it on Google play](https://play.google.com/store/apps/details?id=com.shreyasvisweshwaran.matchdapairs&pli=1)
