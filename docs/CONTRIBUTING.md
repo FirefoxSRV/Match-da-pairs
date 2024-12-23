@@ -52,6 +52,7 @@ To set up the project locally:
 4. Run the project: `[command, e.g., npm start or python app.py]`
 
 For more detailed setup instructions, refer to the [README.md](https://github.com/FirefoxSRV/Match-da-pairs/blob/master/README.md).
+Please follow our [SECURITY.md]() guidelines for information on reporting security vulnerabilities. We take security seriously and appreciate your help in keeping the project safe.
 
 ---
 
