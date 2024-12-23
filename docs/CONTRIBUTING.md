@@ -41,7 +41,7 @@ Please adhere to the following standards when writing code:
 ## Community Guidelines
 When contributing, please:
 - Be respectful and considerate of others.
-- Follow the [Code of Conduct]().
+- Follow the [Code of Conduct](https://github.com/FirefoxSRV/Match-da-pairs/blob/master/docs/CODE_OF_CONDUCT.md).
 - Ask for help or clarification if needed.
 
 ## Getting Started
@@ -52,7 +52,7 @@ To set up the project locally:
 4. Run the project: `[command, e.g., npm start or python app.py]`
 
 For more detailed setup instructions, refer to the [README.md](https://github.com/FirefoxSRV/Match-da-pairs/blob/master/README.md).
-Please follow our [SECURITY.md]() guidelines for information on reporting security vulnerabilities. We take security seriously and appreciate your help in keeping the project safe.
+Please follow our [SECURITY.md](https://github.com/FirefoxSRV/Match-da-pairs/blob/master/docs/SECURITY.md) guidelines for information on reporting security vulnerabilities. We take security seriously and appreciate your help in keeping the project safe.
 
 ---
 
