@@ -5,14 +5,14 @@ Thank you for considering contributing to Match Da Pairs! We welcome contributio
 ## How Can You Contribute?
 
 ### 1. Reporting Bugs
-If you find a bug, please let us know by creating an issue in the [issue tracker](https://github.com/FirefoxSRV/Match-da-pairs/issues/new). When reporting a bug, include:
+If you find a bug, please let us know by creating an issue in the [Issue Tracker](https://github.com/FirefoxSRV/Match-da-pairs/issues/new). When reporting a bug, include:
 - A clear description of the issue
 - Steps to reproduce the problem
 - Expected and actual behavior
 - Any relevant screenshots or logs
 
 ### 2. Suggesting Features or Enhancements
-We love hearing new ideas! If you have a feature or enhancement in mind, submit a feature request in the [issue tracker](https://github.com/FirefoxSRV/Match-da-pairs/issues/new) Provide as much detail as possible, including:
+We love hearing new ideas! If you have a feature or enhancement in mind, submit a feature request in the [Issue Tracker](https://github.com/FirefoxSRV/Match-da-pairs/issues/new) Provide as much detail as possible, including:
 - The problem the feature addresses
 - How the feature will work
 - Any examples or mockups
