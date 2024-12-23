@@ -6,7 +6,7 @@ If you discover a security vulnerability in this project, we encourage you to re
 
 To report a vulnerability, please follow these steps:
 
-1. **Email**: Send an email to [security@example.com](________________) with the details of the vulnerability.
+1. **Email**: Send an email to __________ with the details of the vulnerability.
 2. **Include Details**: Provide as much information as possible about the issue, including:
    - A description of the vulnerability
    - Steps to reproduce the issue
