@@ -12,18 +12,6 @@ To report a vulnerability, please follow these steps:
    - Steps to reproduce the issue
    - Potential impact of the vulnerability
    - Any possible mitigations or fixes you may have identified
-3. **Wait for Response**: We will acknowledge receipt of your report within 2 business days and work with you to understand and resolve the issue promptly.
-
-## Supported Versions
-
-We are committed to addressing security issues in the following versions of our project:
-
-| Version | Supported          |
-|---------|--------------------|
-| x.y.z   | :white_check_mark: |
-| a.b.c   | :x:                |
-
-Note: Please update this table with the actual versions supported in your project.
 
 ## Handling Vulnerabilities
 
