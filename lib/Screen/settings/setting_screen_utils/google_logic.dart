@@ -1,11 +1,12 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../Logic/google_user_info.dart';
-import '../../../Logic/shared_preferences.dart';
 
-Future<User?> signInWithGoogle(GoogleSignIn googleSignIn, FirebaseAuth auth) async {
+
+Future<User?> signInWithGoogle(GoogleSignIn googleSignIn,FirebaseAuth auth) async {
   try {
     final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
@@ -18,33 +19,24 @@ Future<User?> signInWithGoogle(GoogleSignIn googleSignIn, FirebaseAuth auth) asy
       final User? user = authResult.user;
       selfUser.classMapper(user);
 
-      // Store user data in shared preferences
-      await setDataToStore(user?.email, user?.displayName, user?.photoURL);
-
       return user;
-    } else {
-      if (kDebugMode) {
-        print("Google sign-in failed: googleUser is null");
-      }
     }
   } catch (error) {
     if (kDebugMode) {
-      print("Error during Google sign-in: $error");
+      print(error);
     }
   }
   return null;
 }
 
-Future<void> signOut(GoogleSignIn googleSignIn, FirebaseAuth auth) async {
+
+Future<void> signOut(googleSignIn,auth) async {
   try {
     await auth.signOut();
     await googleSignIn.signOut();
 
     user = null;
     userAvailable = false;
-
-    // Clear user data from shared preferences
-    await resetStoredData();
   } catch (e) {
     if (kDebugMode) {
       print("Error signing out: $e");
