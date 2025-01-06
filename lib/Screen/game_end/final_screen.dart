@@ -29,10 +29,10 @@ class GameCompleteScreen extends StatefulWidget {
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
   late Future<void> _wait;
-  Future<ConnectivityResult> getConnectivity() async {
+  Future<List<ConnectivityResult>> getConnectivity() async {
     return await Connectivity().checkConnectivity();
   }
-  Future<ConnectivityResult> checkConnectivityAndProceed() async {
+  Future<List<ConnectivityResult>> checkConnectivityAndProceed() async {
     var connectivityResult = await getConnectivity();
     return connectivityResult;
   }
