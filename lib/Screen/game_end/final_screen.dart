@@ -47,8 +47,9 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
   Future<void> checkAndProceed() async {
     var connectivityResult = await checkConnectivityAndProceed();
     SelfUser user = selfUser;
+    var connectivityResult_notList = connectivityResult[0];
     if (user.email != "") {
-      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+      if (validConnections.contains(connectivityResult_notList)) {
         print("Success");
         leaderboardPush(user, score);
         // leaderboardPush(user, 8);

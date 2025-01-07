@@ -26,9 +26,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<bool> isEmailInDatabase(String email) async {
     try {
-      DatabaseReference dbRef = FirebaseDatabase.instance.ref('Players');
-      Query query = dbRef.orderByChild('email').equalTo(email);
 
+      DatabaseReference dbRef = FirebaseDatabase.instance.ref('Leaderboard');
+      Query query = dbRef.orderByChild('email').equalTo(email);
       DatabaseEvent event = await query.once();
       if (event.snapshot.exists) {
         Map<dynamic, dynamic> values = event.snapshot.value as Map<dynamic, dynamic>;
@@ -123,7 +123,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       try {
                                         DatabaseReference dbRef = FirebaseDatabase
                                             .instance
-                                            .ref('Players');
+                                            .ref('Leaderboard');
                                         Query query = dbRef
                                             .orderByChild('email')
                                             .equalTo(selfUser.email);
