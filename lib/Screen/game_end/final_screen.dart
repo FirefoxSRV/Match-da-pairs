@@ -29,6 +29,14 @@ class GameCompleteScreen extends StatefulWidget {
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
   late Future<void> _wait;
+
+  List<ConnectivityResult> validConnections = [
+    ConnectivityResult.mobile,
+    ConnectivityResult.wifi,
+    ConnectivityResult.ethernet,
+    ConnectivityResult.vpn,
+    ConnectivityResult.bluetooth,
+  ];
   Future<List<ConnectivityResult>> getConnectivity() async {
     return await Connectivity().checkConnectivity();
   }
@@ -159,9 +167,10 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                               containerWidth: containerWidth,
                               title: "Leaderboard",
                               onPressed: () async{
-                                var connectivityResult = await (Connectivity().checkConnectivity());
-                                if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-
+                                var connectivityResult = await Connectivity().checkConnectivity();
+                                print(connectivityResult);
+                                var connectivityResult_notList = connectivityResult[0];
+                                if (validConnections.contains(connectivityResult_notList)) {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
