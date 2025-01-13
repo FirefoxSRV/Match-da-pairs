@@ -44,14 +44,14 @@ class _MyAppState extends State<MyApp> {
             appBar: AppBar(
               toolbarHeight: containerHeight*0.2,
               elevation: 0,
-              backgroundColor: Theme.of(context).colorScheme.background,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               title: Padding(
                 padding: EdgeInsets.only(top:containerHeight*0.01),
                 child: Text(greet,style: GoogleFonts.quicksand(color:Theme.of(context).colorScheme.tertiary
                     ,fontSize: 32,fontWeight: FontWeight.w300),),
               ),
             ),
-            backgroundColor: Theme.of(context).colorScheme.background,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             floatingActionButton: AnimatedScale(
               duration: const Duration(milliseconds: 950),
               scale: 1,
@@ -63,7 +63,7 @@ class _MyAppState extends State<MyApp> {
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 openBuilder: (BuildContext context, VoidCallback closeContainer) {
-                  return SettingScreen();
+                  return const SettingScreen();
                 },
                 closedBuilder: (BuildContext context, VoidCallback openContainer) {
                   return FloatingActionButton(
@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> {
                     children: [
                       ParentMaterialAlertDialog(containerHeight: containerHeight,title: "About game",onPressed: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context){
-                          return AboutGameScreen();
+                          return const AboutGameScreen();
                         }));
                       },),
                       ParentMaterialAlertDialog(containerHeight: containerHeight,title: "Play",onPressed: (){

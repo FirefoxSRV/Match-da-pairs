@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../Logic/functions_objects.dart';
+import '../../Logic/structure.dart';
 import 'game_screen_utils/difficulty_bar.dart';
 import 'game_screen_utils/exit_dialog.dart';
 import 'game_screen_utils/material_alert_dialog.dart';
@@ -18,62 +18,69 @@ class GameScreen extends StatefulWidget {
 }
 
 class GameScreenState extends State<GameScreen> {
-  Timer? timeLeft;
-  bool _showPoints = false;
   Selected _selected = Selected.easy;
-  Timer? _switchModeTimer;
-  bool _isSwitchingModes = false;
+
+  int points = 0;
+  int tries = 0;
+
+  bool _showPoints = false;
   int remainingSeconds = 5;
   Timer? _isCountToStartTimer;
+  String mode = "easy";
+
+  int remainingTime = 0; //Will be updated by the timer
+  bool gameOver = false;
+  late TileManager tileManager;
+
+  bool gameIsPaused = false;
+
 
   void startTimer() {
-    _isCountToStartTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _isCountToStartTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingSeconds > 0) {
+        if (gameIsPaused) {
+          return;
+        }
         setState(() {
           remainingSeconds--;
         });
       } else {
+        setState(() {
+          _showPoints = true;
+          tileManager.viewModeAll(false);
+        });
         timer.cancel();
       }
     });
   }
 
   void _resetGameState() {
-    if (_isSwitchingModes) {
-      _isCountToStartTimer?.cancel();
-      _switchModeTimer?.cancel();
-    }
-    timeLeft?.cancel();
+    _isCountToStartTimer?.cancel();
     tries = 0;
-    _isSwitchingModes = true;
-    loadSelect = true;
-    itemDuos = getPairs();
-    itemDuos.shuffle();
-    hiddenDuos = itemDuos;
-    selectedTileIndex = -1;
-    selectedImagePath = "";
     points = 0;
     remainingSeconds = 5;
+    remainingTime = 120;
+    gameOver = false;
     _showPoints = false;
-    startTimer();
-    _switchModeTimer = Timer(const Duration(seconds: 5), () {
+    gameIsPaused = false;
+    tileManager = TileManager(updateGameState: (int newPoints, int newTries) {
       setState(() {
-        _showPoints = true;
-        hiddenDuos = getQuestions();
-        loadSelect = false;
-        _isSwitchingModes = false;
+        points = points + newPoints;
+        tries = tries + newTries;
+        gameOver |= (points == 8);
       });
-
-      _isSwitchingModes = false;
     });
+    tileManager.setMode(mode);
+    tileManager.generatePairs(mode);
+    tileManager.viewModeAll(true);
+    startTimer();
   }
 
   @override
   void initState() {
     _selected = Selected.easy;
-    setMode('easy');
+    mode = "easy";
     _isCountToStartTimer?.cancel();
-    _switchModeTimer?.cancel();
     _resetGameState();
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitDown,
@@ -86,17 +93,26 @@ class GameScreenState extends State<GameScreen> {
   @override
   void dispose() {
     _isCountToStartTimer?.cancel();
-    resetRemainingTime();
-    loadSelect = false;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeRight,
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-    timeLeft?.cancel();
-    _switchModeTimer?.cancel();
     super.dispose();
+  }
+
+  void pauseGame(){
+    setState(() {
+      gameIsPaused = true;
+    });
+    tileManager.pauseGame();
+  }
+  void unPauseGame(){
+    setState(() {
+      gameIsPaused = false;
+    });
+    tileManager.unPauseGame();
   }
 
   @override
@@ -104,20 +120,21 @@ class GameScreenState extends State<GameScreen> {
     double alertDialogHeightCalculator = MediaQuery.of(context).size.height;
     return WillPopScope(
       onWillPop: () async {
-        await buildExitDialog(context, alertDialogHeightCalculator);
+        pauseGame();
+        await buildExitDialog(context, alertDialogHeightCalculator, unPauseGame);
         return true;
       },
       child: LayoutBuilder(builder: (context, constraints) {
         var height = constraints.maxHeight;
         Widget currentWidget;
-        if (points != 8) {
+        if (!gameOver) {
           currentWidget = buildGameInProgress(height, context);
         } else {
           currentWidget = buildGameCompleteScreen();
         }
 
         return Scaffold(
-          appBar: points != 8
+          appBar: !gameOver
               ? AppBar(
                   backgroundColor: Colors.transparent,
                   elevation: 0.0,
@@ -127,7 +144,8 @@ class GameScreenState extends State<GameScreen> {
                       color: Theme.of(context).colorScheme.tertiary,
                     ),
                     onPressed: () {
-                      buildExitDialog(context, height);
+                      pauseGame();
+                      buildExitDialog(context, height, unPauseGame);
                     },
                   ),
                 )
@@ -143,6 +161,14 @@ class GameScreenState extends State<GameScreen> {
       }),
     );
   }
+
+  Widget buildRemTime(int remTime) {
+    return Text(
+      "You have $remTime seconds",
+      style: GoogleFonts.quicksand(fontSize: 24, fontWeight: FontWeight.w700),
+    );
+  }
+
 
   GameCompleteScreen buildGameCompleteScreen() {
     return GameCompleteScreen(
@@ -160,18 +186,20 @@ class GameScreenState extends State<GameScreen> {
           backgroundColor: Colors.transparent,
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerDocked,
-          floatingActionButton: StatefulBuilder(builder: (context, setState) {
-            return TimerFloatingActionButton(
-              selected: _selected,
-              showPoints: _showPoints,
-              remainingTime: remainingTime,
-              onTick: (updatedRemainingTIme) {
-                setState(() {
-                  remainingTime = updatedRemainingTIme;
-                });
+          floatingActionButton:
+             TimerFloatingActionButton(
+              mode: mode,
+              isPaused: gameIsPaused,
+              isVisible: _selected!=Selected.easy && _showPoints,
+              onTick : (finalTime) {
+                remainingTime = finalTime;
+                if(finalTime == 0) {
+                  setState(() {
+                    gameOver = true;
+                  });
+                }
               },
-            );
-          }),
+            )
         ),
         Column(
           children: [
@@ -233,11 +261,10 @@ class GameScreenState extends State<GameScreen> {
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
                             mainAxisSpacing: 0.0, maxCrossAxisExtent: 100),
-                    children: List.generate(hiddenDuos.length, (index) {
+                    children: List.generate(16, (index) {
                       return Tile(
-                        state: this,
-                        pathToImage: hiddenDuos[index].getImagePath(),
-                        tileIndex: index,
+                        tileManager: tileManager,
+                        tileIndex : index,
                       );
                     }),
                   ),
@@ -283,6 +310,7 @@ class GameScreenState extends State<GameScreen> {
       child: InkWell(
         splashColor: null,
         onTap: () {
+          pauseGame();
           showDialog(
               context: context,
               builder: (context) {
@@ -297,13 +325,17 @@ class GameScreenState extends State<GameScreen> {
                       color: Theme.of(context).colorScheme.primary,
                       onPressed: () {
                         Navigator.pop(context);
+                        unPauseGame();
                         if (_selected != level) {
                           setState(() {
                             _selected = level;
-                            setMode(level.toString().split(".").last);
+                            mode = level.toString().split(".").last;
+                            tileManager.setMode(mode);
                             _resetGameState();
                             if (_selected != Selected.easy) {
-                              resetRemainingTime();
+                              setState(() {
+                                remainingTime = 120;
+                              });
                             }
                           });
                         }
@@ -322,6 +354,7 @@ class GameScreenState extends State<GameScreen> {
                               color: Theme.of(context).colorScheme.tertiary)),
                       onPressed: () {
                         Navigator.pop(context);
+                        unPauseGame();
                       },
                       child: const Text("Cancel"),
                     )

@@ -10,8 +10,8 @@ Future<void> showLoadingDialog(BuildContext context, String text) async {
       return AlertDialog(
         content: Row(
           children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 24),
+            const CircularProgressIndicator(),
+            const SizedBox(width: 24),
             Text(text),
           ],
         ),

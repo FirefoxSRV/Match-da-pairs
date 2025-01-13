@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
-import '../../../Logic/functions_objects.dart';
+import '../../../Logic/structure.dart';
 import '../../../Logic/google_user_info.dart';
 
-void leaderboardPush(SelfUser user, int newPoints) async {
+void leaderboardPush(SelfUser user, int newPoints, int points) async {
   final newEmail = user.email;
   final displayUrl = user.displayUrl;
   final displayName = user.displayName;

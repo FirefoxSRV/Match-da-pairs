@@ -144,7 +144,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         });
                                         Navigator.pop(context);
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
+                                            .showSnackBar(const SnackBar(
                                             content: Text(
                                                 "User data deleted successfully")));
                                       } catch (error) {
@@ -174,7 +174,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: Text("Cancel"),
+                                    child: const Text("Cancel"),
                                   )
                                 ],
                               );
@@ -188,7 +188,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 title: 'Delete Error',
                                 content:
                                 'No data to delete',
-                                actions: [
+                                actions: const [
                                   // MaterialButton(
                                   //   shape: RoundedRectangleBorder(
                                   //       borderRadius: BorderRadius.circular(20)),

@@ -1,9 +1,7 @@
 
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../Logic/functions_objects.dart';
+import '../../../Logic/structure.dart';
 
 class DifficultyBar extends StatelessWidget {
   const DifficultyBar({

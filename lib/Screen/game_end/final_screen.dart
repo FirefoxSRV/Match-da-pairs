@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/leaderboard/LeaderBoardScreen.dart';
-import '../../Logic/functions_objects.dart';
+import '../../Logic/structure.dart';
 import '../landing_page/landing_page.dart';
 import '../../Logic/google_user_info.dart';
 import 'final_screen_utils/custom_button_layout.dart';
@@ -29,33 +29,46 @@ class GameCompleteScreen extends StatefulWidget {
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
   late Future<void> _wait;
+  // Future<ConnectivityResult> getConnectivity() async {
+  //   return await Connectivity().checkConnectivity();
+  // }
   Future<ConnectivityResult> getConnectivity() async {
-    return await Connectivity().checkConnectivity();
+    // Get the first result from the list
+    var connectivityList = await Connectivity().checkConnectivity();
+    for (var connectivityResult in connectivityList) {
+      if (connectivityResult != ConnectivityResult.none) {
+        return connectivityResult;
+      }
+    }
+    return connectivityList[0];
   }
+
+
   Future<ConnectivityResult> checkConnectivityAndProceed() async {
     var connectivityResult = await getConnectivity();
     return connectivityResult;
   }
+
   Future<void> checkAndProceed() async {
     var connectivityResult = await checkConnectivityAndProceed();
     SelfUser user = selfUser;
     if (user.email != "") {
-      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
         print("Success");
-        leaderboardPush(user, score);
+        leaderboardPush(user, score, widget.points);
         // leaderboardPush(user, 8);
-
       }
-
-
     } else {
       print("Not signed in");
     }
   }
+
   @override
   void initState() {
     super.initState();
-    score = scoreCalculation(widget.tries, widget.remainingTime, widget.selected, widget.points);
+    score = scoreCalculation(
+        widget.tries, widget.remainingTime, widget.selected, widget.points);
     checkAndProceed();
 
     _wait = Future.delayed(const Duration(seconds: 1));
@@ -63,7 +76,6 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -85,8 +97,6 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
     );
   }
 
-
-
   @override
   Widget buildGameCompleteScreen(BuildContext context) {
     return PopScope(
@@ -94,10 +104,11 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
         if (didPop) {
           return;
         }
-        if (remainingTime != 0) {
+        if (widget.remainingTime != 0) {
           Navigator.pop(context);
         }
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const MyApp()));
       },
       child: LayoutBuilder(builder: (context, constraints) {
         double containerHeight = constraints.maxHeight;
@@ -115,7 +126,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                 height: containerHeight * 0.3,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).colorScheme.background),
+                    color: Theme.of(context).colorScheme.surface),
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 5),
@@ -158,36 +169,39 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                           CustomButtonLayout(
                               containerWidth: containerWidth,
                               title: "Leaderboard",
-                              onPressed: () async{
-                                var connectivityResult = await (Connectivity().checkConnectivity());
-                                if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
-
+                              onPressed: () async {
+                                var connectivityResult =
+                                    await (Connectivity().checkConnectivity());
+                                if (connectivityResult ==
+                                        ConnectivityResult.mobile ||
+                                    connectivityResult ==
+                                        ConnectivityResult.wifi) {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const LeaderBoardScreen()),);
-                                }else{
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const LeaderBoardScreen()),
+                                  );
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text("No internet connection"),
                                     ),
                                   );
                                 }
-
-
                               }),
                           CustomButtonLayout(
                             containerWidth: containerWidth,
                             title: "Go Home",
                             onPressed: () {
-                              Navigator.popUntil(context, (route) => route.isFirst);
+                              Navigator.popUntil(
+                                  context, (route) => route.isFirst);
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const MyApp()),
+                                MaterialPageRoute(
+                                    builder: (context) => const MyApp()),
                               );
                             },
-
                           ),
                         ],
                       )

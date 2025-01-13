@@ -1,22 +1,28 @@
-class TileModel{
-  String pathToImage;
-  bool selected;
+import 'package:flutter/material.dart';
 
-  TileModel({required this.pathToImage,required this.selected});
+enum SelectState {notSelected, selected, paired}
+enum Selected { easy, medium, hard }
+
+class TileModel{
+  int tileIndex;
+  String pathToImage;
+  ValueNotifier<SelectState> selected = ValueNotifier(SelectState.notSelected);
+
+  TileModel({required this.tileIndex, required this.pathToImage});
 
   void setImagePath(String imageAssetPath){
     pathToImage = imageAssetPath;
   }
 
-  void setIsSelected(bool isSelected){
-    selected = isSelected;
+  void setIsSelected(SelectState selectState){
+    selected.value = selectState;
   }
 
   String getImagePath(){
     return pathToImage;
   }
 
-  bool getSelected(){
-    return selected;
+  SelectState getSelected(){
+    return selected.value;
   }
 }

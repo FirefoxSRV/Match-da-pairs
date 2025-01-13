@@ -1,21 +1,19 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../Logic/functions_objects.dart';
 import '../../game_end/final_screen.dart';
 
 class TimerFloatingActionButton extends StatefulWidget {
-  Selected selected;
-  final bool showPoints;
-  final int remainingTime;
-  final Function(int remainingTime) onTick;
-  TimerFloatingActionButton({
+  final bool isVisible;
+  final Function(int remTime) onTick;
+  final String mode;
+  final bool isPaused;
+  const TimerFloatingActionButton({
     Key? key,
-    required this.selected,
-    required this.showPoints,
-    required this.remainingTime,
+    required this.mode,
+    required this.isPaused,
+    required this.isVisible,
     required this.onTick,
   }) : super(key: key);
 
@@ -26,54 +24,62 @@ class TimerFloatingActionButton extends StatefulWidget {
 class _TimerFloatingActionButtonState extends State<TimerFloatingActionButton> {
 
   Timer? timer;
-
+  int remainingTime = 120;
   @override
   void initState() {
     super.initState();
-    if (widget.selected != Selected.easy && widget.showPoints) {
+    if (widget.isVisible) {
       startTimer();
     }
   }
+
+  void resetTimer() {
+    setState(() {
+      remainingTime = 120;
+    });
+    if (widget.isVisible) {
+      startTimer();
+    }
+  }
+
 
   @override
   void didUpdateWidget(TimerFloatingActionButton oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selected != Selected.easy && widget.showPoints) {
+    if(oldWidget.mode != widget.mode || oldWidget.isVisible != widget.isVisible) {
+      resetTimer();
+    }
+    if (widget.isVisible) {
       startTimer();
     } else {
-      stopTimer1();
+      stopTimer();
     }
   }
 
   void startTimer() {
-    stopTimer1();
-    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    stopTimer();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (remainingTime > 0) {
+        if (widget.isPaused) {
+          return;
+        }
         setState(() {
           remainingTime--;
         });
-        widget.onTick(remainingTime);
       } else {
-        stopTimer2();
+        stopTimer();
       }
+      widget.onTick(remainingTime);
     });
   }
 
-  void stopTimer1() {
+  void stopTimer() {
     timer?.cancel();
-  }
-
-  void stopTimer2() {
-    timer?.cancel();
-    Navigator.pop(context);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-      return GameCompleteScreen(selected: widget.selected,remainingTime: remainingTime,tries: tries,points: points);
-    }));
   }
 
   @override
   void dispose() {
-    stopTimer1();
+    stopTimer();
     super.dispose();
   }
 
@@ -81,12 +87,12 @@ class _TimerFloatingActionButtonState extends State<TimerFloatingActionButton> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Visibility(
-      visible: widget.selected != Selected.easy && widget.showPoints,
+      visible: widget.isVisible,
       child: AnimatedContainer(
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
         width: width * 0.5,
         child: AnimatedContainer(
-          duration: Duration(seconds: 1),
+          duration: const Duration(seconds: 1),
           child: FloatingActionButton(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
@@ -96,10 +102,10 @@ class _TimerFloatingActionButtonState extends State<TimerFloatingActionButton> {
             },
             child: Row(
               children: [
-                Expanded(child: Icon(Icons.alarm)),
+                const Expanded(child: Icon(Icons.alarm)),
                 Expanded(
                   child: Text(
-                    "${widget.remainingTime ~/ 60}:${(widget.remainingTime % 60).toString().padLeft(2, '0')}",
+                    "${remainingTime ~/ 60}:${(remainingTime % 60).toString().padLeft(2, '0')}",
                     style: GoogleFonts.quicksand(fontWeight: FontWeight.bold, fontSize: width * 0.05),
                   ),
                 ),
