@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mem_game/Screen/leaderboard/LeaderBoardScreen.dart';
-import '../../Logic/functions_objects.dart';
+import 'package:mem_game/Logic/structure.dart';
 import '../landing_page/landing_page.dart';
 import '../../Logic/google_user_info.dart';
 import 'final_screen_utils/custom_button_layout.dart';
@@ -51,12 +51,10 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
     if (user.email != "") {
       if (validConnections.contains(connectivityResult_notList)) {
         print("Success");
-        leaderboardPush(user, score);
+        leaderboardPush(user, score, widget.points);
         // leaderboardPush(user, 8);
-
       }
-
-
+      print(connectivityResult_notList);
     } else {
       print("Not signed in");
     }
@@ -103,7 +101,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
         if (didPop) {
           return;
         }
-        if (remainingTime != 0) {
+        if (widget.remainingTime != 0) {
           Navigator.pop(context);
         }
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
@@ -124,10 +122,10 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                 height: containerHeight * 0.3,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).colorScheme.background),
+                    color: Theme.of(context).colorScheme.surface),
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 5),
+                  const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 5),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -141,25 +139,25 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Center(
                               child: Column(
-                            children: [
-                              Text(
-                                "Your score is ",
-                                style: GoogleFonts.quicksand(
-                                    color:
+                                children: [
+                                  Text(
+                                    "Your score is ",
+                                    style: GoogleFonts.quicksand(
+                                        color:
                                         Theme.of(context).colorScheme.secondary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 20),
-                              ),
-                              Text(
-                                "$score",
-                                style: GoogleFonts.quicksand(
-                                    color:
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 20),
+                                  ),
+                                  Text(
+                                    "$score",
+                                    style: GoogleFonts.quicksand(
+                                        color:
                                         Theme.of(context).colorScheme.secondary,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 30),
-                              ),
-                            ],
-                          )),
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 30),
+                                  ),
+                                ],
+                              )),
                         ),
                       ),
                       Column(
@@ -173,10 +171,10 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                                 var connectivityResult_notList = connectivityResult[0];
                                 if (validConnections.contains(connectivityResult_notList)) {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                          const LeaderBoardScreen()),);
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                        const LeaderBoardScreen()),);
                                 }else{
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

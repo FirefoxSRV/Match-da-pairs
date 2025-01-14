@@ -20,7 +20,7 @@ class CustomButtonLayout extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
       onPressed: onPressed,
       child: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Text(
           title,
           style: TextStyle(

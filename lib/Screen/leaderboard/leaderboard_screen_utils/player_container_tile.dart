@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -32,13 +31,13 @@ Widget playerContainer({required Map player, required int rank,required BuildCon
 
                         fit: BoxFit.cover,
                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                          return Icon(Icons.account_circle);
+                          return const Icon(Icons.account_circle);
                         },
                       ),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(player['displayName'].toString(), style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontSize: 17)),
                   ),
                   Center(child: Text(player['points'].toString(), style: GoogleFonts.quicksand(color: Theme.of(context).colorScheme.secondary,fontWeight: FontWeight.w700,fontSize: 20))),

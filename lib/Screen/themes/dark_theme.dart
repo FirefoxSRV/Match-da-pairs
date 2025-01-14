@@ -11,7 +11,7 @@ ThemeData darkTheme = ThemeData(
   dividerColor: kDarkSwitchForegroundDisableColor,
   canvasColor: kDarkSwitchForegroundEnableColor,
   colorScheme: ColorScheme.dark(
-    background: kScaffoldBackgroundColor,
+    surface: kScaffoldBackgroundColor,
     primary: kDarkModeButtonBackgroundGreen,
     secondary: kDarkModeButtonIconTextColorGreen,
     tertiary: kDarkBodyTextColor,

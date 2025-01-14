@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'material_alert_dialog.dart';
 
-Future<dynamic> buildExitDialog(BuildContext context, double height) {
+Future<dynamic> buildExitDialog(BuildContext context, double height, Function onCancel) {
   return showDialog(
       context: context,
       builder: (context) {
@@ -34,8 +33,9 @@ Future<dynamic> buildExitDialog(BuildContext context, double height) {
                       color: Theme.of(context).colorScheme.tertiary)),
               onPressed: () {
                 Navigator.pop(context);
+                onCancel();
               },
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
             )
           ],
         );

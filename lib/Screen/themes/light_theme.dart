@@ -12,7 +12,7 @@ ThemeData lightTheme = ThemeData(
   dividerColor: kLightSwitchForegroundDisableColor,
   canvasColor: kLightSwitchForegroundEnableColor,
   colorScheme: ColorScheme.light(
-      background: kLightScaffoldBackgroundColor,
+      surface: kLightScaffoldBackgroundColor,
       primary: kLightModeButtonBackgroundGreen,
       secondary: kLightModeButtonIconTextColorGreen,
       tertiary: kLightBodyTextColor,
