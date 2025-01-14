@@ -9,25 +9,26 @@ import 'Screen/themes/theme_provider.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await getStoredData();
   imageCache.clear();
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(ThemeMode.system),
       child: Consumer<ThemeProvider>(
-          builder: (context,themeProvider,child) {
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              themeMode: themeProvider.themeMode,
-              home:  const MyApp(),
-              theme: lightTheme,
-              darkTheme: darkTheme,
-            );
-          }
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            themeMode: themeProvider.themeMode,
+            home: const MyApp(),
+            theme: lightTheme,
+            darkTheme: darkTheme,
+          );
+        },
       ),
     ),
   );

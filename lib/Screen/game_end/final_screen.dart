@@ -29,21 +29,9 @@ class GameCompleteScreen extends StatefulWidget {
 class _GameCompleteScreenState extends State<GameCompleteScreen> {
   late int score;
   late Future<void> _wait;
-  // Future<ConnectivityResult> getConnectivity() async {
-  //   return await Connectivity().checkConnectivity();
-  // }
   Future<ConnectivityResult> getConnectivity() async {
-    // Get the first result from the list
-    var connectivityList = await Connectivity().checkConnectivity();
-    for (var connectivityResult in connectivityList) {
-      if (connectivityResult != ConnectivityResult.none) {
-        return connectivityResult;
-      }
-    }
-    return connectivityList[0];
+    return await Connectivity().checkConnectivity();
   }
-
-
   Future<ConnectivityResult> checkConnectivityAndProceed() async {
     var connectivityResult = await getConnectivity();
     return connectivityResult;
@@ -52,9 +40,9 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
   Future<void> checkAndProceed() async {
     var connectivityResult = await checkConnectivityAndProceed();
     SelfUser user = selfUser;
+    var connectivityResult_notList = connectivityResult[0];
     if (user.email != "") {
-      if (connectivityResult == ConnectivityResult.mobile ||
-          connectivityResult == ConnectivityResult.wifi) {
+      if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
         print("Success");
         leaderboardPush(user, score, widget.points);
         // leaderboardPush(user, 8);
@@ -126,7 +114,7 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                 height: containerHeight * 0.3,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
-                    color: Theme.of(context).colorScheme.surface),
+                    color: Theme.of(context).colorScheme.background),
                 child: Padding(
                   padding:
                       const EdgeInsets.only(left: 15.0, right: 15.0, bottom: 5),
@@ -169,20 +157,16 @@ class _GameCompleteScreenState extends State<GameCompleteScreen> {
                           CustomButtonLayout(
                               containerWidth: containerWidth,
                               title: "Leaderboard",
-                              onPressed: () async {
-                                var connectivityResult =
-                                    await (Connectivity().checkConnectivity());
-                                if (connectivityResult ==
-                                        ConnectivityResult.mobile ||
-                                    connectivityResult ==
-                                        ConnectivityResult.wifi) {
+                              onPressed: () async{
+                                var connectivityResult = await (Connectivity().checkConnectivity());
+                                if (connectivityResult == ConnectivityResult.mobile || connectivityResult == ConnectivityResult.wifi) {
+
                                   Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LeaderBoardScreen()),
-                                  );
-                                } else {
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                          const LeaderBoardScreen()),);
+                                }else{
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content: Text("No internet connection"),
