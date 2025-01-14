@@ -18,12 +18,8 @@ class Tile extends StatefulWidget {
 class _TileState extends State<Tile> {
   void _onTileTap() {
     setState(() {
-      widget.tileManager.onTilePress(widget.tileIndex, _updateUI);  // Trigger tile press in TileManager
+      widget.tileManager.onTilePress(widget.tileIndex); // Trigger tile press in TileManager
     });
-  }
-
-  void _updateUI() {
-    setState(() {});  // Trigger UI update when the tile state changes
   }
 
   @override
@@ -65,14 +61,14 @@ class TileManager {
   bool hideItems = false;
   bool resetting = false;
   Function? updateGameState;
-  String mode = "easy";
+  Selected mode = Selected.easy;
 
   TileManager({this.updateGameState}) {
     selectedTileIndex = -1;
     generatePairs(mode);
   }
 
-  void setMode(String mode){
+  void setMode(Selected mode){
     if(mode != this.mode) {
       this.mode = mode;
       generatePairs(mode);
@@ -95,14 +91,16 @@ class TileManager {
     resetting = false;
   }
 
-  void generatePairs(String mode){
-    String folderPath = "assets/images/$mode";
+  void generatePairs(Selected newMode){
+    setMode(newMode);
+    String modeString = mode.toString().split('.').last;
+    String folderPath = "assets/images/$modeString";
     int name = 0;
     for (int i = 0; i < 8; i++) {
       name = i+97;
-      String finalName = (mode=="hard") ? "bw_"+String.fromCharCode(name) : String.fromCharCode(name);
-      questions[i] = "$folderPath/${finalName}.png";
-      questions[i+8] = "$folderPath/${finalName}.png";
+      String finalName = (mode==Selected.hard) ? "bw_"+String.fromCharCode(name) : String.fromCharCode(name);
+      questions[i] = "$folderPath/$finalName.png";
+      questions[i+8] = "$folderPath/$finalName.png";
     }
     questions.shuffle();
 
@@ -120,24 +118,16 @@ class TileManager {
     }
   }
 
-  void onTilePress(int index, Function updateUI) {
-    if (resetting || tiles[index].selected.value != SelectState.notSelected) return;
+  void onTilePress(int index) {
+    if (resetting || (tiles[index].selected.value != SelectState.notSelected)) return;
     if (selectedTileIndex == -1 ) {
       selectedTileIndex = index;
       tiles[index].selected.value = SelectState.selected;
     }
     else {
-      // if (selectedTileIndex == index) {
-      //   selectedTileIndex = -1;
-      //   tiles[index].selected = SelectState.notSelected;
-      //   updateUIPrevious = () {};
-      //   updateUI();
-      //   return;
-      // }
       int newPoints = 0;
       int newTries = 1;
       tiles[index].selected.value = SelectState.selected;
-      updateUI();
       if (questions[selectedTileIndex] == questions[index]) {
         playCorrectSound();
         resetting = true;

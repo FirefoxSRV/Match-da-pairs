@@ -19,19 +19,16 @@ class GameScreen extends StatefulWidget {
 
 class GameScreenState extends State<GameScreen> {
   Selected _selected = Selected.easy;
-
   int points = 0;
   int tries = 0;
 
   bool _showPoints = false;
   int remainingSeconds = 5;
   Timer? _isCountToStartTimer;
-  String mode = "easy";
 
   int remainingTime = 0; //Will be updated by the timer
   bool gameOver = false;
   late TileManager tileManager;
-
   bool gameIsPaused = false;
 
 
@@ -55,13 +52,15 @@ class GameScreenState extends State<GameScreen> {
   }
 
   void _resetGameState() {
-    _isCountToStartTimer?.cancel();
     tries = 0;
     points = 0;
+
+    _isCountToStartTimer?.cancel();
     remainingSeconds = 5;
+    _showPoints = false;
+
     remainingTime = 120;
     gameOver = false;
-    _showPoints = false;
     gameIsPaused = false;
     tileManager = TileManager(updateGameState: (int newPoints, int newTries) {
       setState(() {
@@ -70,8 +69,7 @@ class GameScreenState extends State<GameScreen> {
         gameOver |= (points == 8);
       });
     });
-    tileManager.setMode(mode);
-    tileManager.generatePairs(mode);
+    tileManager.setMode(_selected);
     tileManager.viewModeAll(true);
     startTimer();
   }
@@ -79,7 +77,6 @@ class GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     _selected = Selected.easy;
-    mode = "easy";
     _isCountToStartTimer?.cancel();
     _resetGameState();
     SystemChrome.setPreferredOrientations([
@@ -188,7 +185,7 @@ class GameScreenState extends State<GameScreen> {
               FloatingActionButtonLocation.centerDocked,
           floatingActionButton:
              TimerFloatingActionButton(
-              mode: mode,
+              mode: _selected,
               isPaused: gameIsPaused,
               isVisible: _selected!=Selected.easy && _showPoints,
               onTick : (finalTime) {
@@ -329,8 +326,7 @@ class GameScreenState extends State<GameScreen> {
                         if (_selected != level) {
                           setState(() {
                             _selected = level;
-                            mode = level.toString().split(".").last;
-                            tileManager.setMode(mode);
+                            tileManager.setMode(_selected);
                             _resetGameState();
                             if (_selected != Selected.easy) {
                               setState(() {

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../game_end/final_screen.dart';
+import '../../../Logic/structure.dart';
 
 class TimerFloatingActionButton extends StatefulWidget {
   final bool isVisible;
   final Function(int remTime) onTick;
-  final String mode;
+  final Selected mode;
   final bool isPaused;
   const TimerFloatingActionButton({
     Key? key,

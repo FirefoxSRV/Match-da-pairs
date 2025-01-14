@@ -8,7 +8,7 @@ class DifficultyBar extends StatelessWidget {
     super.key,
     required Selected selected,
     required double height
-  }) : _selected = selected, height= height;
+  }) : _selected = selected, height = height;
 
   final Selected _selected;
   final double height;
